@@ -6,6 +6,11 @@ Data set: https://drive.google.com/drive/folders/1txWfEG-f1z8qj8dxJaw6QksPSR3nL6
 
 Data description: https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge
 
+Structure:
+1) Visualisation and interactive/animated maps 
+2) Wildfires over time 
+3) Wildfires and the land cover 
+4) Wildfires and meteorogical factors 
 
 Possible questions:
 - 
