@@ -3,6 +3,8 @@ Project 2
 
 Data description: https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge
 
+15 Useful R packages for Data Visualization: https://youtu.be/8xWT6qimkTI
+
 Structure:
 1) Visualisation and interactive/animated maps 
 2) Wildfires over time 
