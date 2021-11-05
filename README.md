@@ -14,7 +14,7 @@ Brainstorming : https://docs.google.com/document/d/1t1TRSdXrubLFedwC9bPvZH0JIvgu
 ### Possible questions
 ?
 
-## List of members:
+## List of members
 - Zineb Agnaou (ZinebAg)
 - Fahim Beck (FahimBeck)
 - Matias Janvin (matiasjanvin)
