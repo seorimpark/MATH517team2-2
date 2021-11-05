@@ -10,7 +10,7 @@ Brainstorming: https://docs.google.com/document/d/1t1TRSdXrubLFedwC9bPvZH0JIvguA
 1) Visualisation and interactive/animated maps 
 2) Wildfires over time 
 3) Wildfires and the land cover 
-4) Wildfires and meteorogical factors 
+4) Wildfires and meteorological factors 
 
 ### Possible questions
 ?
