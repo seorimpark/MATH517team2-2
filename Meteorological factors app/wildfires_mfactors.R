@@ -116,8 +116,8 @@ server <- function(input, output) {
       
       # Plot areas
       ggplot() + 
-        geom_map(data=us, map=us, aes(x=long, y=lat, map_id=region),
-                 fill="white", color="black", size=0.15) +
+        geom_map(aes(map_id=region), fill="white", color="black", size=0.15, map=us, data=us) +
+        expand_limits(x = us$long, y = us$lat) +
         geom_point(data=loc, aes(x=lon, y=lat, size=area*2.7), colour="red", shape=15) +
         scale_size_identity() + 
         theme(panel.border = element_blank(), panel.grid.major = element_blank(),
