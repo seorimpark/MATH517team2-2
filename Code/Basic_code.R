@@ -1,61 +1,83 @@
-# read data:
-load("data_train_DF.RData")
-#
+
+library(ggplot2)
 library(tidyr)
 library(dplyr)
-library(plyr)
-library(mgcv)
+library(corrplot)
+library(maps)
 
+# Read data
+load("data_train_DF.RData")
+data = data_train_DF
 
-# explore the data:
-dim(data_train_DF)
-names(data_train_DF)
+# Explore data
+dim(data)
+names(data)
 
 # Remove NA values from CNT and BA
-train_DF <- data_train_DF[!is.na(data_train_DF$CNT),]
-train_DF <- train_DF[!is.na(train_DF$BA),]
+data <- data[!is.na(data$CNT),]
+data <- data[!is.na(data$BA),]
 
-train_DF<-train_DF%>% dplyr::rename(NSwind=clim1, WEwind=clim2, dew_temperature=clim3, temperature=clim4, 
+# Remove columns not related to weather
+remove = c(paste("lc", seq(1:18), sep = ""), "altiMean", "altiSD")
+data = data[, -which(names(data) %in% remove)]
+
+# Renaming weather columns
+data<-data%>% dplyr::rename(NSwind=clim1, WEwind=clim2, dew_temperature=clim3, temperature=clim4, 
          potential_evaporation=clim5, solar_radiation= clim6, 
          thermal_radiation=clim7, pressure=clim8, evaporation=clim9, 
          precipitation=clim10)
 
-head(train_DF)
+# Wind into one component 
+data <- data %>% mutate(Wspeed=(sqrt(NSwind^2+WEwind^2))) %>% select(-NSwind, -WEwind)
 
-## Simplify some covariates 
+# Temperatures in Celsius
+data$dew_temperature = data$dew_temperature - 273.15
+data$temperature = data$temperature - 273.15
 
-dt<- train_DF%>%
-  mutate(Wspeed=(sqrt(NSwind^2+WEwind^2)))%>%
-  select(-NSwind, -WEwind)%>%
-  mutate(trees_typ1=(sum(lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9)))%>%
-  select(-lc1,-lc2,-lc3,-lc4,-lc5,-lc6,-lc7,-lc8,-lc9)%>%
-  mutate(trees_typ2=(sum(lc10+lc11+lc12+lc13+lc14+lc14)))%>%
-  select(-lc10,-lc11,-lc12,-lc13,-lc14,-lc15,-lc16,-lc17,-lc18)%>%
-  mutate(RH=100*exp(17.625*(dew_temperature-273.15)/(dew_temperature-39.11))/
-           exp(17.625*(temperature-273.15)/(temperature-39.11))  )
+# Overview
+names(data)
+sapply(data, range)
+head(data)
 
-head(dt)
+#####################################################
 
-# histogram of training data on log-scale for better readability:
-hist(log(1+dt$CNT), xlab = "log(1+CNT)", main = "Histogram of log-transformed CNT")
-hist(log(1+dt$BA), xlab = "log(1+BA)", main = "Histogram of log-transformed BA")
+# Parameters for sub-setting
+lim_CNT = 60
+lim_BA = 5000
 
-# Or select datasets for some years 
-dt_training<- dt%>%
-  filter(year %in% c(1995, 2005, 2015))
+# Subset and check
+selection = data[data$CNT >= lim_CNT & data$BA >= lim_BA,]
+dim(selection)
+names(selection)
+range(selection$year)
+range(selection$month)
 
+# Correlations
+sel = cor(selection)
 
-# CNT (Poisson regression)
-fit = glm(CNT ~., data = dt_training, family = poisson(link = log))
-summary(fit)
+# Plot
+dev.new(width=5, height=4)
+corrplot(sel, method = "color", addCoef.col="black", tl.cex = 0.8, number.digits = 2, 
+         number.cex = 0.6)
 
+############# map #############
 
-# CNT (Poisson regression):
-fit.gcv <- gam(CNT~  te(lon, lat),data=dt_training,family=poisson())
-summary(fit.gcv)
+# Finding considered areas
+loc = unique( selection[, c("lon", "lat", "area")] )
+us <- map_data('state')
 
-
-
-
-
+# Plot areas
+ggplot() + 
+  geom_map(data=us, map=us, aes(x=long, y=lat, map_id=region),
+           fill="white", color="black", size=0.15) +
+  geom_point(data=loc, aes(x=lon, y=lat, size=area*2.7), colour="red", shape=15) +
+  scale_size_identity() + 
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(),
+        plot.title = element_text(size=20, hjust=0.5, vjust=2)) + 
+  ggtitle('Areas considered in the subset') + 
+  coord_fixed(1.3)
+  
 

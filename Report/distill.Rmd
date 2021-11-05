@@ -1,0 +1,186 @@
+---
+title: "Wildfires in the US"
+description: |
+  Statistical computation and visualization (MATH-517)
+date: November 16, 2021
+author:
+- name: "Zineb AGNAOU"  
+  url: https://github.com/ZinebAg
+- name: "Fahim BECK"
+  url: https://github.com/FahimBeck
+- name: "Salima JAOUA"
+  url: https://github.com/salimajaoua
+- name: "Matias JANVIN"
+  url: https://github.com/matiasjanvin
+- name: "Seorim PARK"
+  url: https://github.com/seorimpark
+output: distill::distill_article
+---
+<style>
+body {text-align: justify}
+body {text-justify: inter-word}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(knitr.duplicate.label = "allow")
+```
+
+## Introduction
+
+
+
+### Research questions
+
+
+### Approaches
+
+
+## Sources of information / datasets
+
+Transformations to talk :
+
+* Wind speed in one variable 
+* Temperatures in Celsius
+
+## Packages
+
+Here are some packages used in our project. Make sure they are installed before running the R Markdown file. Since the format of this Markdown is not standard, you need to install the *Distill* package. To avoid errors, install it via [Github](https://github.com/rstudio/distill) (the package is updated there) with the following commands: <br>
+`install.packages("devtools")` <br>
+`devtools::install_github("rstudio/distill")`
+
+````{r, message=FALSE}
+
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(corrplot)
+library(maps)
+
+````
+
+
+## Visualisation and interactive / animated maps
+
+## Wildfires over time
+
+## Wildfires and the land cover
+
+## Wildfires and meteorogical factors
+
+*Idea and tools used* 
+
+````{r, include=FALSE}
+
+# Read data
+load("Data/data_train_DF.RData")
+data = data_train_DF
+
+# Explore data
+dim(data)
+names(data)
+
+# Remove NA values from CNT and BA
+data <- data[!is.na(data$CNT),]
+data <- data[!is.na(data$BA),]
+
+# Remove columns not related to weather
+remove = c(paste("lc", seq(1:18), sep = ""), "altiMean", "altiSD")
+data = data[, -which(names(data) %in% remove)]
+
+# Renaming weather columns
+data<-data%>% dplyr::rename(NSwind=clim1, WEwind=clim2, dew_temperature=clim3, temperature=clim4, 
+         potential_evaporation=clim5, solar_radiation= clim6, 
+         thermal_radiation=clim7, pressure=clim8, evaporation=clim9, 
+         precipitation=clim10)
+
+# Wind into one component 
+data <- data %>% mutate(Wspeed=(sqrt(NSwind^2+WEwind^2))) %>% select(-NSwind, -WEwind)
+
+# Temperatures in Celsius
+data$dew_temperature = data$dew_temperature - 273.15
+data$temperature = data$temperature - 273.15
+
+# Overview
+names(data)
+sapply(data, range)
+head(data)
+
+````
+
+*Sub-setting and thresholds chosen*
+
+````{r, include=FALSE}
+
+# Parameters for sub-setting
+lim_CNT = 60
+lim_BA = 5000
+
+# Subset and check
+selection = data[data$CNT >= lim_CNT & data$BA >= lim_BA,]
+dim(selection)
+names(selection)
+range(selection$month)
+
+````
+
+*Coverage period check*
+
+````{r}
+
+range(selection$year)
+
+````
+
+*Pearson correlation heatmap*
+
+````{r, fig.width=7, fig.height=7, echo=FALSE}
+
+# Correlations
+sel = cor(selection)
+
+# Plot
+corrplot(sel, method = "color", addCoef.col="black", tl.cex = 0.8, cl.cex = 0.8,
+               number.cex = 0.7, number.digits = 2)
+
+````
+
+*What are factors, observations*
+
+*Plot of considered areas in the subset independent from time*
+
+````{r, echo=FALSE}
+
+# Finding considered areas
+loc = unique( selection[, c("lon", "lat", "area")] )
+us <- map_data('state')
+
+# Plot areas
+ggplot() + 
+  geom_map(data=us, map=us, aes(x=long, y=lat, map_id=region),
+           fill="white", color="black", size=0.15) +
+  geom_point(data=loc, aes(x=lon, y=lat, size=area*2.7), colour="red", shape=15) +
+  scale_size_identity() + 
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(), axis.title.y=element_blank(),
+        axis.text.y=element_blank(), axis.ticks.y=element_blank(),
+        plot.title = element_text(size=18, hjust=0.5, vjust=2)) + 
+  ggtitle('Areas considered in the subset') + 
+  coord_fixed(1.3)
+
+````
+
+*Observations on the numbers / variation through time*
+
+*For other thresholds, interactive app available [HERE](https://fahimbeck.shinyapps.io/wildfires_mfactors/).*
+
+
+## Discussion and conclusion 
+
+
+## Future improvements 
+
+
+
