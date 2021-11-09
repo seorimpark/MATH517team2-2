@@ -10,6 +10,7 @@ library(zoo)
 library(ggplot2)
 library(hrbrthemes) 
 library(corrplot)
+library(dplyr)
 
 ```
 
@@ -96,7 +97,7 @@ data_all<-data_all[ , -which(names(data_all) %in% c("year","month"))]
 
 ```{r}
 sapply(data_all, class)
-sapply(data98,class)
+sapply(data93,class)
 ```
 ```{r}
 lats<-unique(data_all$lat)
@@ -137,7 +138,7 @@ lc_from_place<-function(df, lon_,lat_, lc_)
   }
   else{return(NA)}
 }
-#lc_from_place(df, lons[1],lats[1], 1)
+#lc_from_place(data_all, lons[1],lats[1], 1)
 
 ```
 
@@ -184,8 +185,9 @@ lons_= lons[1]
 df <- NULL
 for(lcs_ in 1:17)
    {trial1<-lc_from_place(data_all, lons_,lats_, lcs_)
+   if(!is.null(dim(trial1))){
    temp_df <- data.frame(x=trial1[,2], y=trial1[,1], col=rep(lcs_:lcs_, each=nrow(trial1)))
-   df <- rbind(df,temp_df)} 
+   df <- rbind(df,temp_df)} }
 p=ggplot(df,aes(x=x,y=y,group=col,colour=factor(col))) +geom_line()
 p=p+guides(colour=guide_legend(ncol=2))
 p
