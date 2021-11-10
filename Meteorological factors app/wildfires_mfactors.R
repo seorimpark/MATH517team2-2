@@ -45,14 +45,14 @@ ui <- fluidPage(
                      present during a wildfire. As this is an unusual event, we will first 
                      consider a subset of our data. We will only take the areas per month 
                      which have at least a certain number of wildfires and which have been 
-                     burned above a certain threshold. Please indicate these two values below 
+                     burnt above a certain threshold. Please indicate these two values below 
                      using the sliders. Note that if both are too large, the subset will be
                      too small and problems will occur in the outputs.", 
                      HTML("<br/>"),
                      "As a result, a correlation heatmap (Pearson) will allow you to 
                      distinguish certain factors that could favor a wildfire. On the second 
                      tab, you will find a map of the US representing the areas considered 
-                     in the subset, independent of months and years."),
+                     in the subset, regardless of months and years."),
             sliderInput("CNT",
                         "Number of wildfires (CNT):",
                         min = 0,

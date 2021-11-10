@@ -29,7 +29,6 @@ options(knitr.duplicate.label = "allow")
 ## Introduction
 
 
-
 ### Research questions
 
 
@@ -68,7 +67,7 @@ library(maps)
 
 ## Wildfires and meteorogical factors
 
-*Idea and tools used* 
+In this section, we try to find some meteorological factors that could potentially trigger a wildfire. To do so, we will plot a Pearson correlation heatmap. The first step is to get a subset from our initial dataset that is more representative of wildfire conditions. As a fire is quite a rare event, we will not be able to find any links if we were considering the entire population (the correlations would be around 0). 
 
 ````{r, include=FALSE}
 
@@ -108,7 +107,8 @@ head(data)
 
 ````
 
-*Sub-setting and thresholds chosen*
+To get our subset, we will only consider areas per month which have at least a certain number of wildfires and which have been burnt above a certain threshold. For our example, we take rows with more than 60 wildfires ($CNT \geq 60$) and 5000 acres of aggregated burnt area ($BA \geq 5000$, approximately 20km<sup>2</sup>) in the current month. 
+
 
 ````{r, include=FALSE}
 
@@ -124,7 +124,7 @@ range(selection$month)
 
 ````
 
-*Coverage period check*
+We check whether the period in years of the subset matches that of the initial dataset, i.e. 1993 to 2015. We see that it does. 
 
 ````{r}
 
@@ -132,7 +132,7 @@ range(selection$year)
 
 ````
 
-*Pearson correlation heatmap*
+As a result, a correlation heatmap will allow us to distinguish certain factors that could favor a wildfire. 
 
 ````{r, fig.width=7, fig.height=7, echo=FALSE}
 
@@ -145,9 +145,18 @@ corrplot(sel, method = "color", addCoef.col="black", tl.cex = 0.8, cl.cex = 0.8,
 
 ````
 
-*What are factors, observations*
+Since we are looking for meteorological risk factors, we may only consider the first two rows or columns of the heatmap. 
 
-*Plot of considered areas in the subset independent from time*
+
+First, we see that there are no pairs of fully correlated variables. Indeed, the highest value (absolute) is 0.43. The number of wildfires and months are negatively correlated. This can be explained by the fact that months range from March to September and that there are more occurrences of fire in March and April than in August and September. The fact that the numbers are small shows that the causes of a wildfire are meteorologically multifactorial.
+
+An interesting observation is that $CNT$ and $BA$ are negatively correlated, meaning that the more area burnt, the fewer wildfires there are. Most of the time, the signs of correlations in the first two rows are not the same for these two variables. For example, by looking at temperatures and solar radiation, the higher they are, the more area burnt, but the less wildfires. This can be explained by the fact that our subset contains substantial wildfires, so there aren't many, but they are destructive.
+
+Another variable that we can comment on is precipitation. For an area to be burnt, there must be no rain or high humidity conditions, hence the negative correlations between $BA$ and precipitation. The positive correlation with $CNT$ could be explained by unstable weather conditions. As with wind speed, the higher it is, the more unstable the air masses and the greater the risk of a natural disaster.
+
+But we should be careful with these correlations as we used a subset and as their values are not that high in absolute value. 
+
+Next, a map of the US represents the areas considered in the subset, regardless of months and years.
 
 ````{r, echo=FALSE}
 
@@ -172,9 +181,9 @@ ggplot() +
 
 ````
 
-*Observations on the numbers / variation through time*
+It can be seen that the areas represented are not that many in number and are located where the forest cover is the most important. For example, there are almost no red squares in the central region of the United States, as this area is mostly non-forest land.
 
-*For other thresholds, interactive app available [HERE](https://fahimbeck.shinyapps.io/wildfires_mfactors/).*
+For other thresholds, an interactive app is available [here](https://fahimbeck.shinyapps.io/wildfires_mfactors/). Instructions and explanations are displayed on the app. Basically, you have the same results as above, but thresholds for $CNT$ and $BA$ are entered by the user. 
 
 
 ## Discussion and conclusion 
