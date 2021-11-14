@@ -18,7 +18,7 @@ library(png)
 library(imager)
 
 # loadind data 
-load("/Users/Mac/Desktop/SCV/SCV_project/MATH517team2-2/Data/data_train_DF.RData")
+load("data_train_DF.RData")
 data_withNA = data_train_DF
 
 #removing NA
@@ -110,7 +110,7 @@ ui <- shinyUI(fluidPage(
       min=25.25,
       max=49.25,
       step = 0.5,
-      value= 28.75,
+      value= 40.75,
       ticks = FALSE,
       animate = FALSE
     ),
@@ -119,7 +119,7 @@ ui <- shinyUI(fluidPage(
       min=-124.75,
       max=-66.75,
       step = 0.5,
-      value= -70.25,
+      value= -90.25,
       ticks = FALSE,
       animate = FALSE
     )),
@@ -127,7 +127,7 @@ ui <- shinyUI(fluidPage(
   # Show a plot of the generated distribution
   mainPanel("main panel",
             fluidRow(
-              splitLayout(cellWidths = c("20%","40%" ,"40%"), plotOutput("myPlot0"),plotOutput("myPlot1"), plotOutput("myPlot2"))
+              splitLayout(cellWidths = c("30%","35%" ,"35%"), plotOutput("myPlot0"),plotOutput("myPlot1"), plotOutput("myPlot2"))
             ))
 ))
 
@@ -137,8 +137,8 @@ ui <- shinyUI(fluidPage(
 server <- function(input, output) {
   output$myPlot0 <- renderPlot({
     
-    load.image("/Users/Mac/Desktop/SCV/SCV_project/MATH517team2-2/Wildfires and the land cover analysis/interactiveapp/distribution.jpeg")
-    
+    image<-load.image("/Users/Mac/Desktop/SCV/SCV_project/MATH517team2-2/Wildfires and the land cover analysis/interactiveapp/distribution.jpeg")
+    plot(image,axes=FALSE, frame.plot=TRUE)
   })
   output$myPlot1 <- renderPlot({
     distLat <- input$lat

@@ -1,0 +1,13 @@
+name: LandCovers
+title: LandCovers
+username:
+account: zinebag
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5120025
+bundleId: 5249843
+url: https://zinebag.shinyapps.io/LandCovers/
+when: 1636876534.94902
+lastSyncTime: 1636876534.94904
+asMultiple: FALSE
+asStatic: FALSE
