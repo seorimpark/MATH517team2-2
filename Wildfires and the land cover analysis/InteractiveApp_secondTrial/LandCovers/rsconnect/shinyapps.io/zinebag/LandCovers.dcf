@@ -4,10 +4,10 @@ username:
 account: zinebag
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 5120025
-bundleId: 5249843
+appId: 5120966
+bundleId: 5250381
 url: https://zinebag.shinyapps.io/LandCovers/
-when: 1636876534.94902
-lastSyncTime: 1636876534.94904
+when: 1636897951.02855
+lastSyncTime: 1636897951.02856
 asMultiple: FALSE
 asStatic: FALSE

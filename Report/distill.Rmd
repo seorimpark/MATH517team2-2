@@ -334,7 +334,11 @@ Although in this particular example of Malibu, the proportion of different landc
          xlab("Years") + ylab("Percentages of landcovers")
         }
 ```
-# add the interactive part here. 
+
+
+To access the intarctive part, click [this link](https://zinebag.shinyapps.io/LandCovers/). In this app you will able to select the longitude and lattitude wanted and see the distribution of the landcovers. 
+
+
 ### Predominant Land covers Analysis and Shifts:
 
 ```{r, include= FALSE}
@@ -400,7 +404,7 @@ names = c('cropland rainfed',
 We will first proceed by representing the territory according to the predominant type of coverage. Figure () shows this arrangement in the year 2000. We observe that water dominates the maritime borders, tree broadleaved are predominant in the east of the country while the west is dominated by tree needleleave. We can easily identify the cities of New York, Los angeles and other large cities by their predominance of urban space.
 
 
-# add the interactive link for all years
+
 ```{r,echo=FALSE}
 Year <- 2000
     
@@ -449,6 +453,11 @@ us <- map_data('state')
 number_shifts<-1:5
 
 ```
+
+
+To access the intarctive part, click [this link](https://zinebag.shinyapps.io/AppShift/). In this app you will able to select the year and the predominant landcover will display directly on the us map. 
+
+
 
 ```{r, echo=FALSE}
 

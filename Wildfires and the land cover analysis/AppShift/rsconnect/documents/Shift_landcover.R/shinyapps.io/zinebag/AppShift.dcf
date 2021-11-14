@@ -1,0 +1,13 @@
+name: AppShift
+title: AppShift
+username:
+account: zinebag
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5120988
+bundleId: 5250389
+url: https://zinebag.shinyapps.io/AppShift/
+when: 1636898299.43383
+lastSyncTime: 1636898299.43384
+asMultiple: FALSE
+asStatic: FALSE

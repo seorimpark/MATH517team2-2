@@ -151,7 +151,8 @@ server <- function(input, output) {
             df <- rbind(df,temp_df)} }
         if(!is.null(df)){
             p<-ggplot(df,aes(x=x,y=y,group=col,colour=factor(col))) + geom_line()+guides(colour=guide_legend(ncol=2))
-            p
+            p+ ggtitle("Distribution of landcover across time") +
+                xlab("Years") + ylab("Percentages of landcovers")
         }
         
         
@@ -177,7 +178,7 @@ server <- function(input, output) {
             theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
                   axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(),
                   plot.title = element_text(size=20, hjust=0.5, vjust=2)) + 
-            ggtitle('Areas considered: ') + 
+            ggtitle('Exact location considered: ') + 
             coord_fixed(1.3)
         
     })
