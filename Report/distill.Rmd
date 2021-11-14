@@ -55,15 +55,421 @@ library(tidyr)
 library(dplyr)
 library(corrplot)
 library(maps)
-
+library(tidyverse)
+library(Hmisc)
+library(zoo)
+library(ggplot2)
+library(hrbrthemes) 
+library(corrplot)
+library(dplyr)
+library('plot.matrix')
+library('psych')
 ````
+
+## Exploratory Data Analysis
+```{r, include=FALSE}
+load("../Data/data_train_DF.RData")
+data_withNA = data_train_DF
+dim(data_withNA)
+
+```
+# add reference to the introduction and mention it is majorly inspired by the one present on the website:
+Wildfires are uncontrolled fires of fuel materials composed of mostly natural vegetation, such as woods or shrublands. They represent an environmental threat with major impacts all over the world, and their frequency of outbreak and severity are expected to increase with global warming Jones et al. 2020. Each year, wildfires cause many direct fatalities in humans, as well as extreme air pollution events and loss of both biodiversity and other valuable ecosystem services. They also contribute a substantial fraction of global greenhouse gas emissions each year, so they can further worsen climate change. The modeling of wildfires has been approached using a wide variety of statistical approaches (see, e.g., Preisler et al. 2004, Pereira & Turkman 2019, Xi et al. 2019), some of which employ extreme value theory (see, e.g., Pereira & Turkman 2019).
+
+As for the origin of wildfire starts, lightning is the main natural cause, but in the overwhelming majority of cases, human activities are responsible. They can be intentional (arson, children) or accidental (burning debris, agricultural activities, campfires, smoking). In general, wildfires are the result of a combination of the presence of combustible materials (e.g., a forest), their easy flammability (e.g., as a result of extreme weather conditions such as droughts), and a triggering event (e.g., lightning or human activity). In most fire-prone regions of the world, wildland fire activity has seasonal cycles due to the seasonality of favorable weather conditions.
+
+To assist in wildland fire management, it is essential to understand and predict the risk factors that contribute to wildland fires and their spatial and seasonal distribution. Wildland fire management involves a multitude of tasks, including monitoring forest ecosystems, deploying preventative measures, firefighting logistics, and short-term forecasting and long-term projections of wildland fire activity.
+
+With the chosen data set, we can concentrate on two important components of wildland fire activeness: fire occurrence and fire magnitude. Given a region of space and time, we consider the number of spatially separated wildfire events as an observation with respect to the first aspect (occurrence), and the aggregate burned area of wildfires originating from the area of interest as an observation with respect to the second aspect (size). 
+
+The dataset contains 563,983 rows for 37 columns. The columns are the following:
+
+* CNT – number of wildfires 
+* BA – aggregated burnt area of wildfires in acres 
+* lon – longitude coordinate of grid cell center
+* lat – latitude coordinate of grid cell center
+* area – the proportion of a grid cell that overlaps the continental US (a value in (0,1], which can be smaller than 1 for grid cells on the boundary of the US territory)
+* month – month of observation (integer value between 3 and 9)
+* year – year of observation (integer value between 1 and 23, with 1 corresponding to year 1993 and 23 to year 2015)
+* lc1 to lc18: area proportion of 18 land cover classes in the grid cell. 
+Their denominations as given in the original dataset are as follows:
+  * cropland rainfed
+  * cropland rainfed herbaceous cover
+  * mosaic cropland
+  * mosaic natural vegetation
+  * tree broadleaved evergreen closed to open
+  * tree broadleaved deciduous closed to open
+  * tree needleleave evergreen closed to open
+  * tree needleleaved deciduous closed to open
+  * tree mixed
+  * mosaic tree and shrub
+  * shrubland
+  * grassland
+  * sparse vegetation
+  * tree cover flooded fresh or brakish water
+  * shrub or herbaceous cover flooded
+  * urban
+  * bare areas
+  * water
+* altiMean, altiSD: altitude-related variables given as mean and standard devation in the grid cell 
+* clim1 to clim10: monthly means of 10 meteorological variables in the grid cell. They present as follows:
+  * 10m U-component of wind (the wind speed in Eastern direction) (m/s)
+  * 10m V-component of wind (the wind speed in Northern direction) (m/s)
+  * Dewpoint temperature (temperature at 2m from ground to which air must be cooled to become       saturated with water vapor, such that condensation ensues) (Kelvin)
+  * Temperature (at 2m from ground) (Kelvin)
+  * Potential evaporation (the amount of evaporation of water that would take place if a sufficient source of water were available) (m)
+  * Surface net solar radiation (net flux of shortwave radiation; mostly radiation coming from the sun) (J/m2)
+  * Surface net thermal radiation (net flux of longwave radiation; mostly radiation emitted by the surface) (J/m2)
+  * Surface pressure (Pa)
+  * Evaporation (of water) (m)
+  * Precipitation (m)
+  
+Please note that the area proportions lc1 to lc18 do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. 
+
+
+Since the original data was given under the context of a [prediction competition with the university of Edimburgh](https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge), there is a 8,000 of missing values in each of the columns CNT and BA. The missing values are not located necessarly in the same lines for the two features. 
+
 
 
 ## Visualisation and interactive / animated maps
 
 ## Wildfires over time
 
-## Wildfires and the land cover
+## Wildfires and the land cover:
+### Corrolation between Land covers and Wildfires:
+```{r, include=FALSE}
+load("../Data/data_train_DF.RData")
+data_withNA = data_train_DF
+data<-data_withNA %>% drop_na()
+```
+
+```{r,echo=FALSE}
+columns_correlation<-c(1,8:25)
+corrplot(cor(data[,columns_correlation]), method = "color")
+```
+We want to determine if there is a significant correlation between the different land covers and the appearance of fires. In order to do so, we use a database filtered of missing data.  As can be seen in Figure (?), the correlation between the fires remains very low. To confirm this statement, we plot in Figure(?) the variables that have been defined as highly correlated in red and the rest in light blue. We can then see that there is no strong correlation between the columns nor between the columns and the apparition of the fires. We define a correlation as strong when its absolute value exceeds 0.8. 
+
+```{r,echo=FALSE}
+matrix_cor<-cor(data[,columns_correlation])
+
+track_highly_correlated_columns <- function(matrix,threshold) {
+  n<-nrow(matrix)
+  m<-ncol(matrix)
+  threshold2<- - threshold
+  for (i in 1:n) {
+    for (j in 1:m){
+      if((matrix[i,j]>threshold) | (matrix[i,j]< threshold2)){matrix[i,j]<- TRUE}
+      else{matrix[i,j]<- FALSE}
+      
+    }}
+  return(matrix)
+}
+Highly_Correlated<-track_highly_correlated_columns (matrix_cor,0.8)
+
+plotDat <- reshape::melt(Highly_Correlated)
+
+#and plot
+ggplot(plotDat,aes(X1,X2, fill = c( "lightblue","red")[ value + 1 ])) +
+  geom_tile() +
+  scale_fill_identity() +
+  theme_minimal() +
+  ggtitle("Highly correlated features are in red, the rest of the feature are in blue:")
+
+```
+
+
+```{r, include=FALSE}
+
+```
+```{r,echo=FALSE}
+
+```
+
+### Landcover over time and location:
+
+
+In this section, we will study the distribution of land covers over time. To do so, we have selected the geographical coordinates of Malibu, California. This area has been heavily impacted by wildfires in recent years. [In November 2018, the wealthy coastal enclave of Malibu was engulfed by the Woolsey Fire, which spread to over 96,000 acres of land outside of LA and is now 35% contained. At least two people were pronounced dead in Malibu on Friday. Their burned bodies were found in a car near Mulholland Highway](https://www.businessinsider.com/california-wildfires-photos-malibu-woolsey-fire-2018-11?r=US&IR=T). 
+In Figure (), we can see the exact location of the studied point on the map of the United States.
+
+
+```{r, include=FALSE}
+filter_year<-function(data,year){
+    if(year %in% unique(data$year)){
+        data_filtered<-data %>% filter(year == year)
+        data_filtered$Date<-as.yearmon(paste(data_filtered$year, data_filtered$month), "%Y %m")
+        data_filtered$Date<-as.Date(data_filtered$Date)
+        data_filtered<-data_filtered[ , -which(names(data_filtered) %in% c("year","month"))]
+        return (data_filtered)}
+    else return(data)}
+
+data93<-filter_year(data,1993)
+
+data_all<-data
+data_all$Date <- as.yearmon(paste(data_all$year, data_all$month), "%Y %m")
+data_all$Date<-as.Date(data_all$Date)
+data_all<-data_all[ , -which(names(data_all) %in% c("year","month"))]
+
+lats<-unique(data_all$lat)
+lons<-unique(data_all$lon)
+lcs<-1:18
+
+
+min_lon=min(data93$lon)
+max_lon=max(data93$lon)
+min_lat=min(data93$lat)
+max_lat=max(data93$lat)
+
+
+# from one lon and lat cordinates, it gives you the values of lc you want if exits
+# lc goes from 1 to 18
+lc_from_place<-function(df, lon_,lat_, lc_)
+{
+    if (lon_ %in% lons && lat_ %in% lats && lc_ %in% lcs)
+    {
+        values<- df %>% filter(lat == lat_) %>% filter(lon == lon_)
+        col_index<-5+lc_
+        values<-values[, c(col_index,36)]
+        return(values)
+        
+    }
+    else{warning("wrong indices")}
+}
+
+```
+ 
+```{r,echo=FALSE}
+
+        distLat <- 34.3
+        distLon <--118.3
+        
+        if(distLat != 25.25 &&distLat != 49.25) {distLat<-distLat-0.05}
+        if(distLon != -124.25 &&distLat != -66.75) {distLon<-distLon+0.05}
+        #loc = unique( selection[, c("lon", "lat", "area")] )
+        us <- map_data('state')
+        
+        # Plot areas
+        ggplot() + 
+            geom_map(aes(map_id=region), fill="white", color="black", size=0.15, map=us, data=us) +
+            expand_limits(x = us$long, y = us$lat) +
+            geom_point(data=NULL, aes(x=distLon, y=distLat), colour="red", shape=15) +
+            scale_size_identity() + 
+            theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank()) +
+            theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
+                  axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(),
+                  plot.title = element_text(size=20, hjust=0.5, vjust=2)) + 
+            ggtitle('Location considered :') + 
+            coord_fixed(1.3)
+        
+        
+```
+
+
+In Figure (), we can see the distribution of the landcovers with time. We can see that the proportions are relatively stable and consistent with time. The predominant cover is the urban area with 31% of the surface in 1993 this proportion only increases with time. 
+
+
+```{r,echo=FALSE}
+        df <- NULL
+        max<-0
+        indice<-0
+        for(lcs_ in 1:18) {
+          trial1<-lc_from_place(data_all, distLon, distLat, lcs_)
+          if (trial1[1,1]>max){
+            max<-trial1[1,1]
+            indice<-lcs_}
+        if(nrow(trial1)!= 0){
+            temp_df <- data.frame(x=trial1[,2], y=trial1[,1], col=rep(lcs_:lcs_, each=nrow(trial1)))
+            df <- rbind(df,temp_df)} }
+        if(!is.null(df)){
+            p<-ggplot(df,aes(x=x,y=y,group=col,colour=factor(col))) + geom_line()+guides(colour=guide_legend(ncol=2))
+            p+ ggtitle("Distribution of landcover across time") +
+         xlab("Years") + ylab("Percentages of landcovers")
+        }
+```
+
+
+Although in this particular example of Malibu, the proportion of different landcovers seems consistent, this is not always the case. Taking the coordinates in Figure () in Wisconsin,  we can see that the proportions change drastically depending on the year. The percentage of land representing tree broadleaved evergreen closed to open increases with time until it becomes the predominant one, while shrub or herbaceous cover flooded decreases drastically with time as seen in Figure(). We will not analyze the reasons and parameters that may have motivated this change, but we will try to quantify this change in the next section. 
+
+
+```{r,echo=FALSE}
+
+        distLat <- 44.8
+        distLon <--88.8
+        
+        if(distLat != 25.25 &&distLat != 49.25) {distLat<-distLat-0.05}
+        if(distLon != -124.25 &&distLat != -66.75) {distLon<-distLon+0.05}
+        #loc = unique( selection[, c("lon", "lat", "area")] )
+        us <- map_data('state')
+        
+        # Plot areas
+        ggplot() + 
+            geom_map(aes(map_id=region), fill="white", color="black", size=0.15, map=us, data=us) +
+            expand_limits(x = us$long, y = us$lat) +
+            geom_point(data=NULL, aes(x=distLon, y=distLat), colour="red", shape=15) +
+            scale_size_identity() + 
+            theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank()) +
+            theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
+                  axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(),
+                  plot.title = element_text(size=20, hjust=0.5, vjust=2)) + 
+            ggtitle('Location considered :') + 
+            coord_fixed(1.3)
+        
+        
+```
+
+```{r,echo=FALSE}
+        df <- NULL
+        max<-0
+        indice<-0
+        for(lcs_ in 1:18) {
+          trial1<-lc_from_place(data_all, distLon, distLat, lcs_)
+          
+        if(nrow(trial1)!= 0){
+            temp_df <- data.frame(x=trial1[,2], y=trial1[,1], col=rep(lcs_:lcs_, each=nrow(trial1)))
+            df <- rbind(df,temp_df)} }
+        if(!is.null(df)){
+            p<-ggplot(df,aes(x=x,y=y,group=col,colour=factor(col))) + geom_line()+guides(colour=guide_legend(ncol=2))
+            p+ ggtitle("Distribution of landcover across time") +
+         xlab("Years") + ylab("Percentages of landcovers")
+        }
+```
+# add the interactive part here. 
+### Predominant Land covers Analysis and Shifts:
+
+```{r, include= FALSE}
+
+
+data = data_train_DF
+
+
+#removing NA
+#data<-data_withNA %>% drop_na()
+data_all<-data
+data_all$Date <- as.yearmon(paste(data_all$year, data_all$month), "%Y %m")
+data_all$Date<-as.Date(data_all$Date)
+#data_all<-data_all[ , -which(names(data_all) %in% c("year","month"))]
+
+filter_year<-function(data,y){
+  if(y %in% unique(data$year)){
+    data_filtered<-data %>% filter(year == y)
+    data_filtered$Date<-as.yearmon(paste(data_filtered$year, data_filtered$month), "%Y %m")
+    data_filtered$Date<-as.Date(data_filtered$Date)
+    data_filtered<-data_filtered[ , -which(names(data_filtered) %in% c("year","month"))]
+    return (data_filtered)}
+  else return(data)}
+
+data93<-filter_year(data,1993)
+
+
+
+lats<-unique(data_all$lat)
+lons<-unique(data_all$lon)
+lcs<-1:18
+
+
+min_lon=min(data93$lon)
+max_lon=max(data93$lon)
+min_lat=min(data93$lat)
+max_lat=max(data93$lat)
+
+names = c('cropland rainfed',
+          'cropland rainfed herbaceous cover',
+          'mosaic cropland',
+          'mosaic natural vegetation',
+          'tree broadleaved evergreen closed to open',
+          'tree broadleaved deciduous closed to open',
+          'tree needleleave evergreen closed to open',
+          'tree needleleaved deciduous closed to open',
+          'tree mixed',
+          'mosaic tree and shrub',
+          'shrubland',
+          'grassland',
+          'sparse vegetation',
+          'tree cover flooded fresh or brakish water',
+          'shrub or herbaceous cover flooded',
+          'urban',
+          'bare areas',
+          'water')
+
+
+```
+
+
+
+We will first proceed by representing the territory according to the predominant type of coverage. Figure () shows this arrangement in the year 2000. We observe that water dominates the maritime borders, tree broadleaved are predominant in the east of the country while the west is dominated by tree needleleave. We can easily identify the cities of New York, Los angeles and other large cities by their predominance of urban space.
+
+
+# add the interactive link for all years
+```{r,echo=FALSE}
+Year <- 2000
+    
+    p <- data_all %>% 
+      mutate(`Major land cover`=factor(max.col(data_all %>% select(starts_with("lc"))), labels = names[1:18 %in% max.col(data_all  %>% select(starts_with("lc")))])) %>% 
+      filter(year==Year) %>% ggplot(aes(x=lon, y=lat, colour = `Major land cover`)) +
+      geom_point(shape=15, size=2.4) +
+      theme_minimal() + 
+      ggtitle(paste('Major land cover in cells in '),Year) + 
+     # scale_color_manual(values = c("wheat","wheat3", "tan2","khaki4","springgreen3", "darkgreen", "seagreen4","seagreen3","lawngreen","greenyellow", "darkolivegreen","seagreen2", "yellowgreen", "yellow4", "chartreuse3", "sandybrown", "black", "steelblue1"))
+    scale_color_manual(values = c("wheat","wheat3", "tan2","khaki4","springgreen3", "darkgreen", "seagreen4","seagreen3","lawngreen","greenyellow", "darkolivegreen","red", "yellowgreen", "yellow4", "chartreuse3", "sandybrown", "black", "steelblue1"))
+    options(repr.plot.width=15, repr.plot.height=5)
+    p
+```
+
+```{r, include= FALSE}
+names<-1:18
+df_major<-data93[ , which(names(data93) %in% c("lat","lon"))]
+for( y in 1993:2015){
+  df_temp<- data %>% 
+  mutate(`Major land cover`=factor(max.col(data %>% select(starts_with("lc"))), labels = names[1:18 %in% max.col(data  %>% select(starts_with("lc")))])) %>% filter(year==y)
+  #names(df_temp)[names(df_temp) == 'Major land cover'] <- y
+ # new_col_name<-paste("year",y)
+ # colnames(df_temp)[colnames(df_temp) == 'Major land cover'] <- new_col_name
+  #colnames(df_temp$`Major land cover`)<-y
+  df_major<-cbind(df_major,as.numeric(unlist(df_temp[38])))}
+
+
+sapply(df_major, class)
+
+N=nrow(df_major)
+M=ncol(df_major)
+
+NumberShifts <- rep(0, N)
+
+#df_M<-data.frame(df_major)
+for (i in 1:N){
+  for (j in 3:M-1){
+    if(df_major[i,j]!=df_major[i,j+1]){NumberShifts[i]=NumberShifts[i]+1}
+  }
+}
+
+df_shifts<-cbind(data93[ , which(names(data93) %in% c("lat","lon"))],NumberShifts)
+
+us <- map_data('state')
+number_shifts<-1:5
+
+```
+
+```{r, echo=FALSE}
+
+
+
+p <- df_shifts %>% 
+  #mutate(`Major land cover`=factor(max.col(data_all %>% select(starts_with("lc"))), labels = names[1:18 %in% max.col(data_all  %>% select(starts_with("lc")))])) %>% 
+  #filter(year==Year) %>% 
+  ggplot(aes(x=lon, y=lat, colour = as.factor(`NumberShifts`))) +
+  geom_point(shape=15, size=2.4) +
+  theme_minimal() + 
+  ggtitle(paste('Number of landcover shift between 1993 and 2015 ')) + 
+  #legend("Number of changes for the predominant landcover")+
+  scale_color_manual(values = c( "wheat","orangered","sienna", "gray0"))
+options(repr.plot.width=10, repr.plot.height=5)
+p
+```
+
+
+To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant type of space at least once. Indeed in Figure (), we see that the shift values start at 2. We also see that the shifts do not exceed 10, knowing that this measurement is taken over 22 years, this is still relatively low. 
+
 
 ## Wildfires and meteorogical factors
 

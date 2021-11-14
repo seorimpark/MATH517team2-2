@@ -123,6 +123,7 @@ names_lc <- c('cropland rainfed',
   'water')
 ```
 
+
 ```{r}
 # from one lon and lat cordinates, it gives you the values of lc you want if exits
 # lc goes from 1 to 18
@@ -255,7 +256,8 @@ ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, color = continent)) +
 ```
 
 ```{r}
-corrplot(cor(data_all[,-36]), method = "color")
+columns_correlation<-c(1,8:25)
+corrplot(cor(data_all[,columns_correlation]), method = "color")
 ```
 
 ```{r}

@@ -61,7 +61,7 @@ p <- df_shifts %>%
   ggplot(aes(x=lon, y=lat, colour = as.factor(`NumberShifts`))) +
   geom_point(shape=15, size=2.4) +
   theme_minimal() + 
-  ggtitle(paste('Major land cover in cells in ')) + 
+  ggtitle(paste('Number of landcover shift between 1993 and 2015 ')) + 
   #legend("Number of changes for the predominant landcover")+
   scale_color_manual(values = c( "wheat","orangered","sienna","gray0"))
 options(repr.plot.width=10, repr.plot.height=5)

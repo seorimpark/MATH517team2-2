@@ -52,7 +52,8 @@ data_all<-data_all[ , -which(names(data_all) %in% c("year","month"))]
 
 lats<-unique(data_all$lat)
 lons<-unique(data_all$lon)
-lcs<-1:17
+lcs<-1:18
+
 
 
 min_lon=min(data93$lon)
@@ -143,7 +144,7 @@ server <- function(input, output) {
         
         
         df <- NULL
-        for(lcs_ in 1:17)
+        for(lcs_ in 1:18)
         {trial1<-lc_from_place(data_all, distLon,distLat, lcs_)
         if(nrow(trial1)!= 0){
             temp_df <- data.frame(x=trial1[,2], y=trial1[,1], col=rep(lcs_:lcs_, each=nrow(trial1)))
@@ -176,7 +177,7 @@ server <- function(input, output) {
             theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
                   axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(),
                   plot.title = element_text(size=20, hjust=0.5, vjust=2)) + 
-            ggtitle('Areas considered in the subset') + 
+            ggtitle('Areas considered: ') + 
             coord_fixed(1.3)
         
     })
