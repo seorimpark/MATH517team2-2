@@ -32,7 +32,7 @@ data = data_train_DF
 
 
 #removing NA
-data<-data_withNA %>% drop_na()
+#data<-data_withNA %>% drop_na()
 
 filter_year<-function(data,year){
     if(year %in% unique(data$year)){
@@ -102,7 +102,7 @@ ui <- fluidPage(
 (14), shrub or herbaceous cover flooded
 (15), urban
 (16), bare areas
-(17), water (18). Note that the area proportions of all the landcovers do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. These 18 predictors are therefore almost collinear. Note also that when close to the border, you can still see results displayed ( for example taking the coordinates 41.3 and -124.3). This is due to the definition of area and how the map grid was defined."),
+(17), water (18). Note that the area proportions of all the landcovers do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. These 18 predictors are therefore almost collinear. Note also that when close to the border, you can still see results displayed ( for example taking the coordinates 41.3 and -124.3). This is due to the definition of area and how the map grid was defined. Finally, note that if there is no plot, it means the latitude and longitude are not part of the US."),
             
                 sliderInput(
                     "lat", "Select the latitude",
@@ -111,7 +111,7 @@ ui <- fluidPage(
                     step = 0.5,
                     value= 40.75,
                     ticks = FALSE,
-                    animate = FALSE
+                    animate = animationOptions(interval = 3000, loop = TRUE)
                 ),
                 sliderInput(
                     "lon", "Select the longitude",
@@ -120,13 +120,14 @@ ui <- fluidPage(
                     step = 0.5,
                     value= -90.25,
                     ticks = FALSE,
-                    animate = FALSE
+                    animate = animationOptions(interval = 3000, loop = TRUE)
                 )),
 
         # Show a plot of the generated distribution
         mainPanel(tabsetPanel(
-            tabPanel("Landcover Distribution", plotOutput("distPlot")),
-            tabPanel("US Map", br(), plotOutput("usMap"))
+            tabPanel("US Map", br(), plotOutput("usMap")),
+            tabPanel("Landcover Distribution", plotOutput("distPlot"))
+            
         )
     
 )))
