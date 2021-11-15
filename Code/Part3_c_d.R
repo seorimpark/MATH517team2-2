@@ -145,7 +145,7 @@ dataMod = df[, -which(names(df)%in% remove)]
 Matrix = CorMatrix()
  ##Now let's compute the probability that a neighboring area can spread wildfire based on the type of land cover
 #(along with mf as wel)
-hist = hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1),col=8)
+hist = hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1))
 check <- df%>% filter(CNT >100)
 nrow(check)#we get 121 outliers. We are not going to ignore them but to see the distrubition 
 df0 <-df%>% filter(CNT <100)
@@ -211,8 +211,8 @@ data1 <- within(df,{
   n
 })
 summary(df)
-summary(df<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18))
 
+summary(m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18, data = df))
 
 
 
