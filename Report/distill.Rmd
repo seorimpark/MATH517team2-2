@@ -509,87 +509,119 @@ FindCorForLC <- function (x,methode,threshold){
     c = cor(X,Y,method=methode)
     if (c > threshold | c < -threshold){
       correlations = c(correlations, y)
-    } else {
-      correlations = c(correlations, -2)
     }
   }
   return(correlations)
 }
 corr1 = FindCorForLC(1,"pearson",0.6)
-print ("Important correlations for the land cover variable number 1: ",  corr1 )
+paste("Important correlations for the land cover variable number 1: ",  corr1 )
 corr2 = FindCorForLC(2,"pearson",0.6)
-print ("Important correlations for the land cover variable number 2: ",  corr2 )
+paste("Important correlations for the land cover variable number 2: ",  corr2 )
 corr3 = FindCorForLC(3,"pearson",0.6)
-print ("Important correlations for the land cover variable number 3: ",  corr3 )
+paste("Important correlations for the land cover variable number 3: ",  corr3 )
 corr4 =FindCorForLC(4,"pearson",0.6)
-print ("Important correlations for the land cover variable number 4: ",  corr4 )
+paste("Important correlations for the land cover variable number 4: ",  corr4 )
 corr5 =FindCorForLC(5,"pearson",0.6)
-print ("Important correlations for the land cover variable number 5: ",  corr5 )
+paste("Important correlations for the land cover variable number 5: ",  corr5 )
 corr6 =FindCorForLC(6,"pearson",0.6)
-print ("Important correlations for the land cover variable number 6: ",  corr6 )
-corr7 =FindCorForLC(7,"pearson",0.6)
-print ("Important correlations for the land cover variable number 7: ",  corr7 )
+paste("Important correlations for the land cover variable number 6: ",  corr6 )
+corr7=FindCorForLC(7,"pearson",0.6)
+paste("Important correlations for the land cover variable number 7: ",  corr7 )
 corr8 =FindCorForLC(8,"pearson",0.6)
-print ("Important correlations for the land cover variable number 8: ",  corr8 )
+paste("Important correlations for the land cover variable number 8: ",  corr8 )
 corr9 =FindCorForLC(9,"pearson",0.6)
-print ("Important correlations for the land cover variable number 9: ",  corr9 )
+paste("Important correlations for the land cover variable number 9: ",  corr9 )
 corr10 =FindCorForLC(10,"pearson",0.6)
-print ("Important correlations for the land cover variable number 10: ",  corr10 )
+paste("Important correlations for the land cover variable number 10: ",  corr10 )
 corr11 =FindCorForLC(11,"pearson",0.6)
-print ("Important correlations for the land cover variable number 11: ",  corr11 )
+paste("Important correlations for the land cover variable number 11: ",  corr11 )
 corr12 =FindCorForLC(12,"pearson",0.6)
-print ("Important correlations for the land cover variable number 12: ",  corr12 )
+paste("Important correlations for the land cover variable number 12: ",  corr12 )
 corr13 =FindCorForLC(13,"pearson",0.6)
-print ("Important correlations for the land cover variable number 13: ",  corr13 )
+paste("Important correlations for the land cover variable number 13: ",  corr13 )
 corr14 =FindCorForLC(14,"pearson",0.6)
-print ("Important correlations for the land cover variable number 14: ",  corr14 )
+paste("Important correlations for the land cover variable number 14: ",  corr14 )
 corr15 =FindCorForLC(15,"pearson",0.6)
-print ("Important correlations for the land cover variable number 15: ",  corr15 )
+paste("Important correlations for the land cover variable number 15: ",  corr15 )
 corr16 =FindCorForLC(16,"pearson",0.6)
-print ("Important correlations for the land cover variable number 16: ",  corr16 )
+paste("Important correlations for the land cover variable number 16: ",  corr16 )
 corr17 =FindCorForLC(17,"pearson",0.6)
-print ("Important correlations for the land cover variable number 17: ",  corr17 )
+paste("Important correlations for the land cover variable number 17: ",  corr17 )
 corr18 =FindCorForLC(18,"pearson",0.6)
-print ("Important correlations for the land cover variable number 18: ",  corr18 )
+paste("Important correlations for the land cover variable number 18: ",  corr18 )
 ```
 Here, we choose a threshold of 0.6 and none of the correlations has been outputted. This means that all of them are less that 0.6. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the correlation is not linear here. So we are going to compute the correlation with spearman method. 
 ```{r, echo = FALSE}
 corr1 = FindCorForLC(1,"spearman",0.6)
-print ("Important correlations for the land cover variable number 1: ",  corr1 )
+paste("Important correlations for the land cover variable number 1: ",  corr1 )
 corr2 = FindCorForLC(2,"spearman",0.6)
-print ("Important correlations for the land cover variable number 2: ",  corr2 )
+paste("Important correlations for the land cover variable number 2: ",  corr2 )
 corr3 = FindCorForLC(3,"spearman",0.6)
-print ("Important correlations for the land cover variable number 3: ",  corr3 )
+paste("Important correlations for the land cover variable number 3: ",  corr3 )
 corr4 = FindCorForLC(4,"spearman",0.6)
-print ("Important correlations for the land cover variable number 4: ",  corr4 )
+paste("Important correlations for the land cover variable number 4: ",  corr4 )
 corr5 = FindCorForLC(5,"spearman",0.6)
-print ("Important correlations for the land cover variable number 5: ",  corr5 )
+paste("Important correlations for the land cover variable number 5: ",  corr5 )
 corr6 = FindCorForLC(6,"spearman",0.6)
-print ("Important correlations for the land cover variable number 6: ",  corr6 )
+paste("Important correlations for the land cover variable number 6: ",  corr6 )
 corr7 = FindCorForLC(7,"spearman",0.6)
-print ("Important correlations for the land cover variable number 7: ",  corr7)
+paste("Important correlations for the land cover variable number 7: ",  corr7)
 corr8 = FindCorForLC(8,"spearman",0.6)
-print ("Important correlations for the land cover variable number 8: ",  corr8 )
+paste("Important correlations for the land cover variable number 8: ",  corr8 )
 corr9 = FindCorForLC(9,"spearman",0.6)
-print ("Important correlations for the land cover variable number 9: ",  corr9)
+paste("Important correlations for the land cover variable number 9: ",  corr9)
 corr10 = FindCorForLC(10,"spearman",0.6)
-print ("Important correlations for the land cover variable number 10: ",  corr10)
+paste("Important correlations for the land cover variable number 10: ",  corr10)
 corr11 = FindCorForLC(11,"spearman",0.6)
-print ("Important correlations for the land cover variable number 11: ",  corr11)
+paste("Important correlations for the land cover variable number 11: ",  corr11)
 corr12 = FindCorForLC(12,"spearman",0.6)
-print ("Important correlations for the land cover variable number 12: ",  corr12)
+paste("Important correlations for the land cover variable number 12: ",  corr12)
 corr13 = FindCorForLC(13,"spearman",0.6)
-print ("Important correlations for the land cover variable number 12: ",  corr12)
+paste("Important correlations for the land cover variable number 13: ",  corr13)
 corr14 = FindCorForLC(14,"spearman",0.6)
-print ("Important correlations for the land cover variable number 12: ",  corr12)
+paste("Important correlations for the land cover variable number 14: ",  corr14)
 corr15 = FindCorForLC(15,"spearman",0.6)
-print ("Important correlations for the land cover variable number 12: ",  corr12)
+paste("Important correlations for the land cover variable number 15: ",  corr15)
 corr16 = FindCorForLC(16,"spearman",0.6)
-print ("Important correlations for the land cover variable number 12: ",  corr12)
+paste("Important correlations for the land cover variable number 16: ",  corr16)
 corr17 = FindCorForLC(17,"spearman",0.6)
-print ("Important correlations for the land cover variable number 12: ",  corr12)
+paste("Important correlations for the land cover variable number 17: ",  corr17)
 corr18 = FindCorForLC(18,"spearman",0.6)
-print ("Important correlations for the land cover variable number 12: ",  corr12)
+paste("Important correlations for the land cover variable number 18: ",  corr18)
+```
+Now by changing the method, we observe that we get that only the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated.  But the results are not as we expected, so we are going to regroup land covers that are similar. 
+```{r, echo =FALSE}
+dataMod = data
+Rainfed = dataMod$CR+ dataMod$CRherb
+dataMod$Rainfed = Rainfed
+#dataMod <- cbind(dataMod, t(Rainfed))
+remove = c("CR","CRherb")
+dataMod = dataMod[,-which(names(dataMod)%in% remove)]
+Trees = dataMod$TBE +dataMod$TBD +dataMod$TNE + dataMod$TND+ dataMod$TreeMixed+ dataMod$TreeFlood 
+dataMod$Trees = Trees
+remove = c("TBE", "TBD","TNE","TND","TreeMixed","TreeFlood")
+dataMod =dataMod[, -which(names(dataMod)%in% remove)]
+vegetation = dataMod$MosaicVege + dataMod$Svege+ dataMod$Grass
+dataMod$vegetation = vegetation 
+remove = c("MosaicVege","Svege","Grass")
+dataMod = dataMod[, -which(names(dataMod)%in% remove)]
+ShrubArea = dataMod$MosaicTreeShrub + dataMod$Shrub +dataMod$ShrubFlood
+remove = c("MosaicTreeShrub","Shrub","ShrubFlood")
+dataMod = dataMod[, -which(names(dataMod)%in% remove)]
+dataMod$ShrubArea = ShrubArea
+ 
+dataMod %>% relocate(Rainfed,Trees,vegetation,ShrubArea)
+
+corr = cor(dataMod, method = "spearman")
+corrplot(corr, method = "color")
+```
+
+```{r, echo = FALSE}
+colnames(dataMod)
+#dataMod[c(dataMod$Rainfed, dataMod$Trees, dataMod$vegetation,dataMod$FloadArea,dataMod$MosaicC,dataMod$MosaicVege,dataMod$)]
+#corr = cor(X,Y, method = "spearman")
+ # print(corr)
+  #corrplot(corr, method = "color")
 ```
 ### Spreading fire based on the type of land cover
 First, to analyze the spread of a fire, we are going to look for the distribution of the number of fires in a grid during a month.
