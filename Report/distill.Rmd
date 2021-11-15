@@ -58,10 +58,8 @@ library(maps)
 library(tidyverse)
 library(Hmisc)
 library(zoo)
-library(ggplot2)
 library(hrbrthemes) 
-library(corrplot)
-library(dplyr)
+library(pscl)
 library('plot.matrix')
 library('psych')
 ````
@@ -478,6 +476,195 @@ p
 
 
 To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant type of space at least once. Indeed in Figure (), we see that the shift values start at 2. We also see that the shifts do not exceed 10, knowing that this measurement is taken over 22 years, this is still relatively low. 
+
+### Land covers and meteorogical correlation 
+```{r, include = FALSE}
+#have same name of variable 
+df <- data_train_DF
+#Remove the NA values from the data
+df<-df[!is.na(df$CNT),] 
+df<-df[!is.na(df$BA),]
+```
+We want to understand the correlation between land cover and meteorological variables. To do so, we are going to clean our data first, rename the variables by their description so that we can easily analyze our results and then compute the correlation between the variables. The problem is that when trying to output the matrix, we get a warning saying that the matrix is too big. To get an idea of what variable can be highly related we are going to output the correlation between a pair of land cover and meteorological variable when it is bigger than a threshold manually set. 
+```{r, echo = FALSE}
+remove = c("CNT","BA","lon","lat","area","year","month","altiMean","altiSD")
+data =df[, -which(names(df)%in% remove)]
+data<-data%>% dplyr::rename(CR=lc1,CRherb = lc2, MosaicC = lc3, MosaicVege = lc4,
+                            TBE=lc5,TBD = lc6, TNE  = lc7, TND = lc8,
+                            TreeMixed =lc9, MosaicTreeShrub= lc10, Shrub= lc11,
+                            Grass = lc12, Svege = lc13,TreeFlood=lc14,ShrubFlood = lc15,
+                            urban = lc16, BareAreas = lc17, Water = lc18,
+                            NSwind=clim1, WEwind=clim2, 
+                            dew_temperature=clim3, temperature=clim4, 
+                            potential_evaporation=clim5, solar_radiation= clim6, 
+                            thermal_radiation=clim7, pressure=clim8, evaporation=clim9, 
+                            precipitation=clim10)
+FindCorForLC <- function (x,methode,threshold){
+  #Want to show if y has an impact on x
+  X = data[,x]
+  correlations <- 0
+  for (y in 1:10){
+    Y = data[,18+y]
+    #plot(X,Y,method = methode,las =1, xlabel = colnames(X),ylabel=colnames(Y) )
+    c = cor(X,Y,method=methode)
+    if (c > threshold | c < -threshold){
+      correlations = c(correlations, y)
+    } else {
+      correlations = c(correlations, -2)
+    }
+  }
+  return(correlations)
+}
+corr1 = FindCorForLC(1,"pearson",0.6)
+print ("Important correlations for the land cover variable number 1: ",  corr1 )
+corr2 = FindCorForLC(2,"pearson",0.6)
+print ("Important correlations for the land cover variable number 2: ",  corr2 )
+corr3 = FindCorForLC(3,"pearson",0.6)
+print ("Important correlations for the land cover variable number 3: ",  corr3 )
+corr4 =FindCorForLC(4,"pearson",0.6)
+print ("Important correlations for the land cover variable number 4: ",  corr4 )
+corr5 =FindCorForLC(5,"pearson",0.6)
+print ("Important correlations for the land cover variable number 5: ",  corr5 )
+corr6 =FindCorForLC(6,"pearson",0.6)
+print ("Important correlations for the land cover variable number 6: ",  corr6 )
+corr7 =FindCorForLC(7,"pearson",0.6)
+print ("Important correlations for the land cover variable number 7: ",  corr7 )
+corr8 =FindCorForLC(8,"pearson",0.6)
+print ("Important correlations for the land cover variable number 8: ",  corr8 )
+corr9 =FindCorForLC(9,"pearson",0.6)
+print ("Important correlations for the land cover variable number 9: ",  corr9 )
+corr10 =FindCorForLC(10,"pearson",0.6)
+print ("Important correlations for the land cover variable number 10: ",  corr10 )
+corr11 =FindCorForLC(11,"pearson",0.6)
+print ("Important correlations for the land cover variable number 11: ",  corr11 )
+corr12 =FindCorForLC(12,"pearson",0.6)
+print ("Important correlations for the land cover variable number 12: ",  corr12 )
+corr13 =FindCorForLC(13,"pearson",0.6)
+print ("Important correlations for the land cover variable number 13: ",  corr13 )
+corr14 =FindCorForLC(14,"pearson",0.6)
+print ("Important correlations for the land cover variable number 14: ",  corr14 )
+corr15 =FindCorForLC(15,"pearson",0.6)
+print ("Important correlations for the land cover variable number 15: ",  corr15 )
+corr16 =FindCorForLC(16,"pearson",0.6)
+print ("Important correlations for the land cover variable number 16: ",  corr16 )
+corr17 =FindCorForLC(17,"pearson",0.6)
+print ("Important correlations for the land cover variable number 17: ",  corr17 )
+corr18 =FindCorForLC(18,"pearson",0.6)
+print ("Important correlations for the land cover variable number 18: ",  corr18 )
+```
+Here, we choose a threshold of 0.6 and none of the correlations has been outputted. This means that all of them are less that 0.6. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the correlation is not linear here. So we are going to compute the correlation with spearman method. 
+```{r, echo = FALSE}
+corr1 = FindCorForLC(1,"spearman",0.6)
+print ("Important correlations for the land cover variable number 1: ",  corr1 )
+corr2 = FindCorForLC(2,"spearman",0.6)
+print ("Important correlations for the land cover variable number 2: ",  corr2 )
+corr3 = FindCorForLC(3,"spearman",0.6)
+print ("Important correlations for the land cover variable number 3: ",  corr3 )
+corr4 = FindCorForLC(4,"spearman",0.6)
+print ("Important correlations for the land cover variable number 4: ",  corr4 )
+corr5 = FindCorForLC(5,"spearman",0.6)
+print ("Important correlations for the land cover variable number 5: ",  corr5 )
+corr6 = FindCorForLC(6,"spearman",0.6)
+print ("Important correlations for the land cover variable number 6: ",  corr6 )
+corr7 = FindCorForLC(7,"spearman",0.6)
+print ("Important correlations for the land cover variable number 7: ",  corr7)
+corr8 = FindCorForLC(8,"spearman",0.6)
+print ("Important correlations for the land cover variable number 8: ",  corr8 )
+corr9 = FindCorForLC(9,"spearman",0.6)
+print ("Important correlations for the land cover variable number 9: ",  corr9)
+corr10 = FindCorForLC(10,"spearman",0.6)
+print ("Important correlations for the land cover variable number 10: ",  corr10)
+corr11 = FindCorForLC(11,"spearman",0.6)
+print ("Important correlations for the land cover variable number 11: ",  corr11)
+corr12 = FindCorForLC(12,"spearman",0.6)
+print ("Important correlations for the land cover variable number 12: ",  corr12)
+corr13 = FindCorForLC(13,"spearman",0.6)
+print ("Important correlations for the land cover variable number 12: ",  corr12)
+corr14 = FindCorForLC(14,"spearman",0.6)
+print ("Important correlations for the land cover variable number 12: ",  corr12)
+corr15 = FindCorForLC(15,"spearman",0.6)
+print ("Important correlations for the land cover variable number 12: ",  corr12)
+corr16 = FindCorForLC(16,"spearman",0.6)
+print ("Important correlations for the land cover variable number 12: ",  corr12)
+corr17 = FindCorForLC(17,"spearman",0.6)
+print ("Important correlations for the land cover variable number 12: ",  corr12)
+corr18 = FindCorForLC(18,"spearman",0.6)
+print ("Important correlations for the land cover variable number 12: ",  corr12)
+```
+### Spreading fire based on the type of land cover
+First, to analyze the spread of a fire, we are going to look for the distribution of the number of fires in a grid during a month.
+````{r,echo = FALSE}
+hist = hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1))
+`````
+We remark that there most of the values next to 0 and because of the outliers we can't see the distribution very good. So we are going to filter the outliers to have a better view of the distrubution 
+````{r, echo = FALSE}
+df1 <-df%>% filter(CNT<20)
+hist = hist(df1$CNT, breaks = seq(-0.5, max(df1$CNT)+0.5, 1))
+``` 
+Now, since we want to predict the spread of a fire given the land covers data, let's plot the distribution of the number of fire according to each land cover variable. 
+````{r, echo = FALSE}
+#1
+ggplot ()+
+  geom_point(data = df, aes(x = lc1, y= CNT))
+#2
+ggplot ()+
+  geom_point(data = df, aes(x = lc2, y= CNT))
+#3
+ggplot ()+
+  geom_point(data = df, aes(x = lc3, y= CNT))
+#4
+ggplot ()+
+  geom_point(data = df, aes(x = lc4, y= CNT))
+#5
+ggplot ()+
+  geom_point(data = df, aes(x = lc5, y= CNT))
+#6
+ggplot ()+
+  geom_point(data = df, aes(x = lc6, y= CNT))
+#7
+ggplot ()+
+  geom_point(data = df, aes(x = lc7, y= CNT))
+#8
+ggplot ()+
+  geom_point(data = df, aes(x = lc8, y= CNT))
+#9
+ggplot ()+
+  geom_point(data = df, aes(x = lc9, y= CNT))
+#10
+ggplot ()+
+  geom_point(data = df, aes(x = lc10, y= CNT))
+#11
+ggplot ()+
+  geom_point(data = df, aes(x = lc11, y= CNT))
+#12
+ggplot ()+
+  geom_point(data = df, aes(x = lc12, y= CNT))
+#13
+ggplot ()+
+  geom_point(data = df, aes(x = lc13, y= CNT))
+#14
+ggplot ()+
+  geom_point(data = df, aes(x = lc14, y= CNT))
+#15
+ggplot ()+
+  geom_point(data = df, aes(x = lc15, y= CNT))
+#16
+ggplot ()+
+  geom_point(data = df, aes(x = lc16, y= CNT))
+#17
+ggplot ()+
+  geom_point(data = df, aes(x = lc17, y= CNT))
+#18
+ggplot ()+
+  geom_point(data = df, aes(x = lc18, y= CNT))
+```
+
+
+In this section, we try to model the fact that there was a fire in a grid for a given month  given the land cover specification of the grid. The problem is that we have the number of fire in the grid. One can think of using the zero inflated Poisson regression. In fact, the zero inflated Poisson is used to count data with excess zeros and overdispersion, which describe well our data. It combines the Poisson distribution and the logit distribution.
+```{r, echo = FALSE}
+summary(m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18, data = df))
+````
+
 
 
 ## Wildfires and meteorogical factors
