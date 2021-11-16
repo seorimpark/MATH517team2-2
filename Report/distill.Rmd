@@ -477,7 +477,9 @@ p
 
 To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant type of space at least once. Indeed in Figure (), we see that the shift values start at 2. We also see that the shifts do not exceed 10, knowing that this measurement is taken over 22 years, this is still relatively low. 
 
-### Land covers and meteorogical correlation 
+### Land covers and meteorogical correlation
+
+
 ```{r, include = FALSE}
 #have same name of variable 
 df <- data_train_DF
@@ -485,7 +487,11 @@ df <- data_train_DF
 df<-df[!is.na(df$CNT),] 
 df<-df[!is.na(df$BA),]
 ```
-We want to understand the correlation between land cover and meteorological variables. To do so, we are going to clean our data first, rename the variables by their description so that we can easily analyze our results and then compute the correlation between the variables. The problem is that when trying to output the matrix, we get a warning saying that the matrix is too big. To get an idea of what variable can be highly related we are going to output the correlation between a pair of land cover and meteorological variable when it is bigger than a threshold manually set. 
+
+
+We want to understand the correlation between land cover and meteorological variables. To do so, we are going to clean our data first, rename the variables by their description so that we can easily analyze our results and then compute the correlation between the variables. The problem is that when trying to output the matrix, we get a warning saying that the matrix is too big. To get an idea of what variable can be highly related we are going to output the correlation between a pair of land cover and meteorological variable when it is bigger than a threshold manually set.
+
+
 ```{r, echo = FALSE}
 remove = c("CNT","BA","lon","lat","area","year","month","altiMean","altiSD")
 data =df[, -which(names(df)%in% remove)]
@@ -550,7 +556,11 @@ paste("Important correlations for the land cover variable number 17: ",  corr17 
 corr18 =FindCorForLC(18,"pearson",0.6)
 paste("Important correlations for the land cover variable number 18: ",  corr18 )
 ```
+
+
 Here, we choose a threshold of 0.6 and none of the correlations has been outputted. This means that all of them are less that 0.6. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the correlation is not linear here. So we are going to compute the correlation with spearman method. 
+
+
 ```{r, echo = FALSE}
 corr1 = FindCorForLC(1,"spearman",0.6)
 paste("Important correlations for the land cover variable number 1: ",  corr1 )
@@ -589,16 +599,19 @@ paste("Important correlations for the land cover variable number 17: ",  corr17)
 corr18 = FindCorForLC(18,"spearman",0.6)
 paste("Important correlations for the land cover variable number 18: ",  corr18)
 ```
+
+
 Now by changing the method, we observe that we get that only the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated.  But the results are not as we expected, so we are going to regroup land covers that are similar. 
+
+
 ```{r, echo =FALSE}
 dataMod = data
 Rainfed = dataMod$CR+ dataMod$CRherb
 dataMod$Rainfed = Rainfed
-#dataMod <- cbind(dataMod, t(Rainfed))
 remove = c("CR","CRherb")
 dataMod = dataMod[,-which(names(dataMod)%in% remove)]
 Trees = dataMod$TBE +dataMod$TBD +dataMod$TNE + dataMod$TND+ dataMod$TreeMixed+ dataMod$TreeFlood 
-dataMod$Trees = Trees
+dataMod$Trees <- Trees
 remove = c("TBE", "TBD","TNE","TND","TreeMixed","TreeFlood")
 dataMod =dataMod[, -which(names(dataMod)%in% remove)]
 vegetation = dataMod$MosaicVege + dataMod$Svege+ dataMod$Grass
@@ -610,31 +623,37 @@ remove = c("MosaicTreeShrub","Shrub","ShrubFlood")
 dataMod = dataMod[, -which(names(dataMod)%in% remove)]
 dataMod$ShrubArea = ShrubArea
  
-dataMod %>% relocate(Rainfed,Trees,vegetation,ShrubArea)
+dataMod <-dataMod %>% relocate(Rainfed,Trees,vegetation,ShrubArea)
 
-corr = cor(dataMod, method = "spearman")
-corrplot(corr, method = "color")
+
+corrplot(cor(dataMod, method = "spearman"), method = "color")
 ```
 
-```{r, echo = FALSE}
-colnames(dataMod)
-#dataMod[c(dataMod$Rainfed, dataMod$Trees, dataMod$vegetation,dataMod$FloadArea,dataMod$MosaicC,dataMod$MosaicVege,dataMod$)]
-#corr = cor(X,Y, method = "spearman")
- # print(corr)
-  #corrplot(corr, method = "color")
-```
+
+
 ### Spreading fire based on the type of land cover
 First, to analyze the spread of a fire, we are going to look for the distribution of the number of fires in a grid during a month.
-````{r,echo = FALSE}
+
+
+
+```{r,echo = FALSE}
 hist = hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1))
-`````
+```
+
+
 We remark that there most of the values next to 0 and because of the outliers we can't see the distribution very good. So we are going to filter the outliers to have a better view of the distrubution 
-````{r, echo = FALSE}
+
+
+```{r, echo = FALSE}
 df1 <-df%>% filter(CNT<20)
 hist = hist(df1$CNT, breaks = seq(-0.5, max(df1$CNT)+0.5, 1))
 ``` 
+
+
 Now, since we want to predict the spread of a fire given the land covers data, let's plot the distribution of the number of fire according to each land cover variable. 
-````{r, echo = FALSE}
+
+
+```{r, echo = FALSE}
 #1
 ggplot ()+
   geom_point(data = df, aes(x = lc1, y= CNT))
@@ -693,9 +712,11 @@ ggplot ()+
 
 
 In this section, we try to model the fact that there was a fire in a grid for a given month  given the land cover specification of the grid. The problem is that we have the number of fire in the grid. One can think of using the zero inflated Poisson regression. In fact, the zero inflated Poisson is used to count data with excess zeros and overdispersion, which describe well our data. It combines the Poisson distribution and the logit distribution.
+
+
 ```{r, echo = FALSE}
 summary(m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18, data = df))
-````
+```
 
 
 
