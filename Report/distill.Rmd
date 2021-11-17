@@ -15,6 +15,7 @@ author:
 - name: "Seorim PARK"
   url: https://github.com/seorimpark
 output: distill::distill_article
+bibliography: bibliography.bib
 ---
 <style>
 body {text-align: justify}
@@ -36,11 +37,53 @@ options(knitr.duplicate.label = "allow")
 
 
 ## Sources of information / datasets
+The dataset contains 563,983 rows for 37 columns. The columns are the following:
 
-Transformations to talk :
+* CNT – number of wildfires 
+* BA – aggregated burnt area of wildfires in acres 
+* lon – longitude coordinate of grid cell center
+* lat – latitude coordinate of grid cell center
+* area – the proportion of a grid cell that overlaps the continental US (a value in (0,1], which can be smaller than 1 for grid cells on the boundary of the US territory)
+* month – month of observation (integer value between 3 and 9)
+* year – year of observation (integer value between 1 and 23, with 1 corresponding to year 1993 and 23 to year 2015)
+* lc1 to lc18: area proportion of 18 land cover classes in the grid cell. 
+Their denominations as given in the original dataset are as follows:
+  * lc1: cropland rainfed
+  * lc2: cropland rainfed herbaceous cover
+  * lc3: mosaic cropland
+  * lc4: mosaic natural vegetation
+  * lc5: tree broadleaved evergreen closed to open
+  * lc6: tree broadleaved deciduous closed to open
+  * lc7: tree needleleave evergreen closed to open
+  * lc8: tree needleleaved deciduous closed to open
+  * lc9: tree mixed
+  * lc10: mosaic tree and shrub
+  * lc11: shrubland
+  * lc12: grassland
+  * lc13: sparse vegetation
+  * lc14: tree cover flooded fresh or brakish water
+  * lc15: shrub or herbaceous cover flooded
+  * lc16: urban
+  * lc17: bare areas
+  * lc18: water
+* altiMean, altiSD: altitude-related variables given as mean and standard devation in the grid cell 
+* clim1 to clim10: monthly means of 10 meteorological variables in the grid cell. They present as follows:
+  * 10m U-component of wind (the wind speed in Eastern direction) (m/s)
+  * 10m V-component of wind (the wind speed in Northern direction) (m/s)
+  * Dewpoint temperature (temperature at 2m from ground to which air must be cooled to become       saturated with water vapor, such that condensation ensues) (Kelvin)
+  * Temperature (at 2m from ground) (Kelvin)
+  * Potential evaporation (the amount of evaporation of water that would take place if a sufficient source of water were available) (m)
+  * Surface net solar radiation (net flux of shortwave radiation; mostly radiation coming from the sun) (J/m2)
+  * Surface net thermal radiation (net flux of longwave radiation; mostly radiation emitted by the surface) (J/m2)
+  * Surface pressure (Pa)
+  * Evaporation (of water) (m)
+  * Precipitation (m)
+  
+Please note that the area proportions lc1 to lc18 do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. 
 
-* Wind speed in one variable 
-* Temperatures in Celsius
+
+Since the original data was given under the context of a [prediction competition with the university of Edimburgh](https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge), there is a 8,000 of missing values in each of the columns CNT and BA. The missing values are not located necessarly in the same lines for the two features. 
+
 
 ## Packages
 
@@ -62,16 +105,37 @@ library(hrbrthemes)
 library(pscl)
 library('plot.matrix')
 library('psych')
+library(bookdown)
 ````
 
 ## Exploratory Data Analysis
+
 ```{r, include=FALSE}
 load("../Data/data_train_DF.RData")
 data_withNA = data_train_DF
-dim(data_withNA)
-
+data<-data_withNA %>% drop_na()
 ```
-# add reference to the introduction and mention it is majorly inspired by the one present on the website:
+
+When considering only rows without missing values, we are left with  452930 rows. The dataset can be summarised as follows:
+
+```{r, echo=FALSE}
+summary(data)
+```
+```{r,echo=FALSE}
+stacked_df1 <- stack(data[,8:25])
+# Boxplot from the R trees dataset
+colnames(stacked_df1)<-c("distribution", "landcover")
+boxplot(stacked_df1$distribution ~ stacked_df1$landcover, main="Distribution of land covers",lwd = 0.4,alpha = 0.3,horizontal = TRUE,  xlab="percentages", ylab="land covers",outline=FALSE)
+```
+In Figure(), we can see the distribution of landcovers using Boxplot. We can see that most of the land cover represent less than 10% of the the area considered. Meaning that the area considered are very diverse. 
+
+
+We decided transform the temperature from Kelvin to Celsius. We also decide to aggregate the U-component of wind (the wind speed in Eastern direction) 
+and V-component of wind (the wind speed in Northern direction) and use the euclidian norm of the vector:
+$$Wind_{speed_{new}}=\sqrt{Wind_{speed_{East}}^2 + Wind_{speed_{West}}^2 }$$
+
+
+# add references to the introduction to the bibliography and mention it is majorly inspired by the one present on the website:
 Wildfires are uncontrolled fires of fuel materials composed of mostly natural vegetation, such as woods or shrublands. They represent an environmental threat with major impacts all over the world, and their frequency of outbreak and severity are expected to increase with global warming Jones et al. 2020. Each year, wildfires cause many direct fatalities in humans, as well as extreme air pollution events and loss of both biodiversity and other valuable ecosystem services. They also contribute a substantial fraction of global greenhouse gas emissions each year, so they can further worsen climate change. The modeling of wildfires has been approached using a wide variety of statistical approaches (see, e.g., Preisler et al. 2004, Pereira & Turkman 2019, Xi et al. 2019), some of which employ extreme value theory (see, e.g., Pereira & Turkman 2019).
 
 As for the origin of wildfire starts, lightning is the main natural cause, but in the overwhelming majority of cases, human activities are responsible. They can be intentional (arson, children) or accidental (burning debris, agricultural activities, campfires, smoking). In general, wildfires are the result of a combination of the presence of combustible materials (e.g., a forest), their easy flammability (e.g., as a result of extreme weather conditions such as droughts), and a triggering event (e.g., lightning or human activity). In most fire-prone regions of the world, wildland fire activity has seasonal cycles due to the seasonality of favorable weather conditions.
@@ -80,52 +144,7 @@ To assist in wildland fire management, it is essential to understand and predict
 
 With the chosen data set, we can concentrate on two important components of wildland fire activeness: fire occurrence and fire magnitude. Given a region of space and time, we consider the number of spatially separated wildfire events as an observation with respect to the first aspect (occurrence), and the aggregate burned area of wildfires originating from the area of interest as an observation with respect to the second aspect (size). 
 
-The dataset contains 563,983 rows for 37 columns. The columns are the following:
 
-* CNT – number of wildfires 
-* BA – aggregated burnt area of wildfires in acres 
-* lon – longitude coordinate of grid cell center
-* lat – latitude coordinate of grid cell center
-* area – the proportion of a grid cell that overlaps the continental US (a value in (0,1], which can be smaller than 1 for grid cells on the boundary of the US territory)
-* month – month of observation (integer value between 3 and 9)
-* year – year of observation (integer value between 1 and 23, with 1 corresponding to year 1993 and 23 to year 2015)
-* lc1 to lc18: area proportion of 18 land cover classes in the grid cell. 
-Their denominations as given in the original dataset are as follows:
-  * cropland rainfed
-  * cropland rainfed herbaceous cover
-  * mosaic cropland
-  * mosaic natural vegetation
-  * tree broadleaved evergreen closed to open
-  * tree broadleaved deciduous closed to open
-  * tree needleleave evergreen closed to open
-  * tree needleleaved deciduous closed to open
-  * tree mixed
-  * mosaic tree and shrub
-  * shrubland
-  * grassland
-  * sparse vegetation
-  * tree cover flooded fresh or brakish water
-  * shrub or herbaceous cover flooded
-  * urban
-  * bare areas
-  * water
-* altiMean, altiSD: altitude-related variables given as mean and standard devation in the grid cell 
-* clim1 to clim10: monthly means of 10 meteorological variables in the grid cell. They present as follows:
-  * 10m U-component of wind (the wind speed in Eastern direction) (m/s)
-  * 10m V-component of wind (the wind speed in Northern direction) (m/s)
-  * Dewpoint temperature (temperature at 2m from ground to which air must be cooled to become       saturated with water vapor, such that condensation ensues) (Kelvin)
-  * Temperature (at 2m from ground) (Kelvin)
-  * Potential evaporation (the amount of evaporation of water that would take place if a sufficient source of water were available) (m)
-  * Surface net solar radiation (net flux of shortwave radiation; mostly radiation coming from the sun) (J/m2)
-  * Surface net thermal radiation (net flux of longwave radiation; mostly radiation emitted by the surface) (J/m2)
-  * Surface pressure (Pa)
-  * Evaporation (of water) (m)
-  * Precipitation (m)
-  
-Please note that the area proportions lc1 to lc18 do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. 
-
-
-Since the original data was given under the context of a [prediction competition with the university of Edimburgh](https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge), there is a 8,000 of missing values in each of the columns CNT and BA. The missing values are not located necessarly in the same lines for the two features. 
 
 
 
@@ -145,8 +164,12 @@ data<-data_withNA %>% drop_na()
 columns_correlation<-c(1,8:25)
 corrplot(cor(data[,columns_correlation]), method = "color")
 ```
-We want to determine if there is a significant correlation between the different land covers and the appearance of fires. In order to do so, we use a database filtered of missing data.  As can be seen in Figure (?), the correlation between the fires remains very low. To confirm this statement, we plot in Figure(?) the variables that have been defined as highly correlated in red and the rest in light blue. We can then see that there is no strong correlation between the columns nor between the columns and the apparition of the fires. We define a correlation as strong when its absolute value exceeds 0.8. 
+We want to determine if there is a significant correlation between the different land covers and the appearance of fires. In order to do so, we use a database filtered of missing data.  As can be seen in Figure (?), the correlation between the fire and the landcover remains very low. To confirm this statement, we plot in Figure(?) the variables that have been defined as highly correlated in red and the rest in light blue. We can then see that there is no strong correlation between the columns nor between the columns and the apparition of the fires. We define a correlation as strong when its absolute value exceeds 0.8. 
 
+ 
+We can nonetheless note that, besides being small, the correlation between the apparation of fires  and  cropland rainfed herbaceous cover, mosaic cropland, shrubland, grassland, bare areas and water is negative, while the correlation with mosaic natural vegetation, tree broadleaved evergreen closed to open, tree broadleaved deciduous closed to open, tree needleleave evergreen closed to open, tree needleleaved deciduous closed to open, tree mixed, mosaic tree and shrub, sparse vegetation, tree cover flooded fresh or brakish water, shrub or herbaceous cover flooded and urban areas is positive. 
+
+We can 
 ```{r,echo=FALSE}
 matrix_cor<-cor(data[,columns_correlation])
 
@@ -186,7 +209,7 @@ ggplot(plotDat,aes(X1,X2, fill = c( "lightblue","red")[ value + 1 ])) +
 ### Landcover over time and location:
 
 
-In this section, we will study the distribution of land covers over time. To do so, we have selected the geographical coordinates of Malibu, California. This area has been heavily impacted by wildfires in recent years. [In November 2018, the wealthy coastal enclave of Malibu was engulfed by the Woolsey Fire, which spread to over 96,000 acres of land outside of LA and is now 35% contained. At least two people were pronounced dead in Malibu on Friday. Their burned bodies were found in a car near Mulholland Highway](https://www.businessinsider.com/california-wildfires-photos-malibu-woolsey-fire-2018-11?r=US&IR=T). 
+In this section, we will study the distribution of land covers over time. To do so, we have selected the geographical coordinates of Malibu, California. This area has been heavily impacted by wildfires in recent years. 'In November 2018, the wealthy coastal enclave of Malibu was engulfed by the Woolsey Fire, which spread to over 96,000 acres of land outside of LA and is now 35% contained. At least two people were pronounced dead in Malibu on Friday. Their burned bodies were found in a car near Mulholland Highway'@Malibu. 
 In Figure (), we can see the exact location of the studied point on the map of the United States.
 
 
@@ -455,7 +478,44 @@ number_shifts<-1:5
 
 To access the intarctive part, click [this link](https://zinebag.shinyapps.io/AppShift/). In this app you will able to select the year and the predominant landcover will display directly on the us map. 
 
+We can also compare the occurence of fires in a location with its predominant land cover. 
 
+
+```{r, echo=FALSE}
+
+data2000<-filter_year(data,2000)
+
+p <- (data2000 %>% 
+  mutate(`Major land cover`=factor(max.col(data2000 %>% select(starts_with("lc"))), 
+                                   labels = names[1:18 %in% max.col(data2000 %>% select(starts_with("lc")))])) %>%
+  select(c(CNT, lat, lon, `Major land cover`)) %>%
+  group_by(.dots=c("lat", "lon")) %>% 
+  mutate(CNTy=sum(CNT, na.rm=1))) %>%
+  group_by(.dots=c("lat", "lon")) %>% mutate(CNTyMean=mean(CNTy)) %>% 
+  arrange(desc(CNTyMean)) %>% distinct(lat, lon, CNTyMean, `Major land cover`) %>%
+  
+  # ggplot(aes(x=lon, y=lat, colour = `Major land cover`)) +
+  # geom_point(shape=15, size=2.4) +
+  # scale_color_manual(values = c("wheat","wheat3", "tan2","khaki4","springgreen3", "darkgreen", "seagreen4","seagreen3","lawngreen","greenyellow", "darkolivegreen","red", "yellowgreen", "yellow4", "chartreuse3", "sandybrown", "black", "steelblue1")) + 
+  
+  ggplot(aes(x=lon, y=lat)) +
+  geom_point(shape=15, size=2.4)+ 
+  geom_point(aes(size = CNTyMean), alpha=0.25, color="red", stroke = 0, shape = 16) +
+  scale_size(breaks = c(0, 10, 50, 100), 
+             range = c(0, 15), 
+             name="num. of wildfires", 
+             labels = expression(0, 10, 50, 100)) + 
+  theme_minimal() + 
+  ggtitle('Mean number of wildfires in USA in 2000')
+
+p
+```
+In Figure (), we notive that the highest occurency for fires happen in Florida and Georgia in the South East, in New Jersey in the East coast and all along the West coast. These areas are characterised by the predominance fo bradleaved evergreen closed to open trees. 
+This observation can be explained by the effect of climbing fire -- the easy inflammable land covers e.g. grassland and shrubs act as a ladder to higher land cover with higher fuel capacity as trees. 
+Usually, ``the forests are more prone to the fire only when there is a particularly low near-surface SM (soil moisture), most likely from moderate to extensive drought'' @schaefer2019land.
+Also, we can observe that the closeness of urban land cover is correlated with occurrence of wildfires (For instance near New York city and Los Angeles), meaning that the human activity can be the trigger of wildfires. Other commonly known trigger of wildfires is the presence of dry thunderstorms with high activity of cloud-to-ground flashes. This mentioned trigger is usually the cause of the higher frequency of big wildfires in the Pacific Coast.
+The combination of grassland (with needle-leaved trees might be dangerous as can be visible on the Fig() and Fig().
+The presence of needle-leaved trees for wildfires is crucial, since the trees are closer to each-other and the dead branches on the floor with sap provide enough fuel to higher spread of wildfire. Moreover, the land cover of deciduous trees can be especially dangerous in the early spring. The article by Barros et al. @barros2014wildfire studying the fire selectivity in Portugal suggests that the selectivity for wildfire counts is higher for shrublands, grasslands and conifers, but lower for agricultural areas such as cropland. This suggestion seems to be confirmed in the US by the early observations of the Figures () and ().
 
 ```{r, echo=FALSE}
 
@@ -475,7 +535,7 @@ p
 ```
 
 
-To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant type of space at least once. Indeed in Figure (), we see that the shift values start at 2. We also see that the shifts do not exceed 10, knowing that this measurement is taken over 22 years, this is still relatively low. 
+To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant type of space at least once. Indeed in Figure (), we see that the shift values start at 1. We also see that the shifts do not exceed 5, knowing that this measurement is taken over 22 years, this is still relatively low. 
 
 ### Land covers and meteorogical correlation
 
@@ -846,5 +906,6 @@ For other thresholds, an interactive app is available [here](https://fahimbeck.s
 
 ## Future improvements 
 
-
+## References:
+<div id="refs"></div>
 
