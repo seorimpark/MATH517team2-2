@@ -582,97 +582,61 @@ FindCorForLC <- function (x,methode,threshold){
   correlations <- 0
   for (y in 1:10){
     Y = data[,18+y]
-    #plot(X,Y,method = methode,las =1, xlabel = colnames(X),ylabel=colnames(Y) )
     c = cor(X,Y,method=methode)
     if (c > threshold | c < -threshold){
       correlations = c(correlations, y)
+      print (c("cor(",x, ",",y,")=" ,c))
     }
   }
   return(correlations)
 }
 corr1 = FindCorForLC(1,"pearson",0.6)
-paste("Important correlations for the land cover variable number 1: ",  corr1 )
 corr2 = FindCorForLC(2,"pearson",0.6)
-paste("Important correlations for the land cover variable number 2: ",  corr2 )
 corr3 = FindCorForLC(3,"pearson",0.6)
-paste("Important correlations for the land cover variable number 3: ",  corr3 )
 corr4 =FindCorForLC(4,"pearson",0.6)
-paste("Important correlations for the land cover variable number 4: ",  corr4 )
 corr5 =FindCorForLC(5,"pearson",0.6)
-paste("Important correlations for the land cover variable number 5: ",  corr5 )
 corr6 =FindCorForLC(6,"pearson",0.6)
-paste("Important correlations for the land cover variable number 6: ",  corr6 )
 corr7=FindCorForLC(7,"pearson",0.6)
-paste("Important correlations for the land cover variable number 7: ",  corr7 )
 corr8 =FindCorForLC(8,"pearson",0.6)
-paste("Important correlations for the land cover variable number 8: ",  corr8 )
 corr9 =FindCorForLC(9,"pearson",0.6)
-paste("Important correlations for the land cover variable number 9: ",  corr9 )
 corr10 =FindCorForLC(10,"pearson",0.6)
-paste("Important correlations for the land cover variable number 10: ",  corr10 )
 corr11 =FindCorForLC(11,"pearson",0.6)
-paste("Important correlations for the land cover variable number 11: ",  corr11 )
 corr12 =FindCorForLC(12,"pearson",0.6)
-paste("Important correlations for the land cover variable number 12: ",  corr12 )
 corr13 =FindCorForLC(13,"pearson",0.6)
-paste("Important correlations for the land cover variable number 13: ",  corr13 )
 corr14 =FindCorForLC(14,"pearson",0.6)
-paste("Important correlations for the land cover variable number 14: ",  corr14 )
 corr15 =FindCorForLC(15,"pearson",0.6)
-paste("Important correlations for the land cover variable number 15: ",  corr15 )
 corr16 =FindCorForLC(16,"pearson",0.6)
-paste("Important correlations for the land cover variable number 16: ",  corr16 )
 corr17 =FindCorForLC(17,"pearson",0.6)
-paste("Important correlations for the land cover variable number 17: ",  corr17 )
 corr18 =FindCorForLC(18,"pearson",0.6)
-paste("Important correlations for the land cover variable number 18: ",  corr18 )
 ```
 
 
-Here, we choose a threshold of 0.6 and none of the correlations has been outputted. This means that all of them are less that 0.6. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the correlation is not linear here. So we are going to compute the correlation with spearman method. 
+Here, we choose a threshold of 0.6 and none of the correlations has been outputted except one. This means that those who hasn't been printed are less that 0.6. We get that the correlation between the shrublands and the surface net thermal radiation is of -0.72. This seems normal: the more radiation is issued by the surface, the less shrub we get. But the results are not as good as we wanted. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the correlation is not linear here. So we are going to compute the correlation with spearman method to see if the relation between the variables is monotonic. 
 
 
 ```{r, echo = FALSE}
 corr1 = FindCorForLC(1,"spearman",0.6)
-paste("Important correlations for the land cover variable number 1: ",  corr1 )
 corr2 = FindCorForLC(2,"spearman",0.6)
-paste("Important correlations for the land cover variable number 2: ",  corr2 )
 corr3 = FindCorForLC(3,"spearman",0.6)
-paste("Important correlations for the land cover variable number 3: ",  corr3 )
 corr4 = FindCorForLC(4,"spearman",0.6)
-paste("Important correlations for the land cover variable number 4: ",  corr4 )
 corr5 = FindCorForLC(5,"spearman",0.6)
-paste("Important correlations for the land cover variable number 5: ",  corr5 )
 corr6 = FindCorForLC(6,"spearman",0.6)
-paste("Important correlations for the land cover variable number 6: ",  corr6 )
 corr7 = FindCorForLC(7,"spearman",0.6)
-paste("Important correlations for the land cover variable number 7: ",  corr7)
 corr8 = FindCorForLC(8,"spearman",0.6)
-paste("Important correlations for the land cover variable number 8: ",  corr8 )
 corr9 = FindCorForLC(9,"spearman",0.6)
-paste("Important correlations for the land cover variable number 9: ",  corr9)
 corr10 = FindCorForLC(10,"spearman",0.6)
-paste("Important correlations for the land cover variable number 10: ",  corr10)
 corr11 = FindCorForLC(11,"spearman",0.6)
-paste("Important correlations for the land cover variable number 11: ",  corr11)
 corr12 = FindCorForLC(12,"spearman",0.6)
-paste("Important correlations for the land cover variable number 12: ",  corr12)
 corr13 = FindCorForLC(13,"spearman",0.6)
-paste("Important correlations for the land cover variable number 13: ",  corr13)
 corr14 = FindCorForLC(14,"spearman",0.6)
-paste("Important correlations for the land cover variable number 14: ",  corr14)
 corr15 = FindCorForLC(15,"spearman",0.6)
-paste("Important correlations for the land cover variable number 15: ",  corr15)
 corr16 = FindCorForLC(16,"spearman",0.6)
-paste("Important correlations for the land cover variable number 16: ",  corr16)
 corr17 = FindCorForLC(17,"spearman",0.6)
-paste("Important correlations for the land cover variable number 17: ",  corr17)
 corr18 = FindCorForLC(18,"spearman",0.6)
-paste("Important correlations for the land cover variable number 18: ",  corr18)
 ```
 
 
-Now by changing the method, we observe that we get that only the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated.  But the results are not as we expected, so we are going to regroup land covers that are similar. 
+Now by changing the method, we observe that we get that the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated, same result as earlier. And, we also get that the water, urban and surface pressure are correlated. The pressure in the water is higher that the atmospheric pressure and increases with the depth. The pollution of the air explains the positive correlation between urban lands and surface pressure. To visualize our results and try to show more, we are going to regroup our data so that we can compute a correlation matrix. We take variables of land cover that are similar and have a common characteristic and sum them together. 
 
 
 ```{r, echo =FALSE}
@@ -695,12 +659,12 @@ dataMod = dataMod[, -which(names(dataMod)%in% remove)]
 dataMod$ShrubArea = ShrubArea
  
 dataMod <-dataMod %>% relocate(Rainfed,Trees,vegetation,ShrubArea)
-
-
-corrplot(cor(dataMod, method = "spearman"), method = "color")
+corrplot(cor(dataMod, method = "spearman"), method = "color", addCoef.col="black",tl.cex = 0.7, cl.cex = 0.7,
+               number.cex = 0.35, number.digits = 2)
 ```
 
 
+This technique has been useful to represent our previous result. Also we get that Evaporation is negatively correlated with the trees, meaning the more trees there are, less evaporation there is. For the next project, one can think of trying to find correlation between other land cover and meteorological data by plotting the scatter plot to find a curve that approximate the data.
 
 ### Spreading fire based on the type of land cover
 First, to analyze the spread of a fire, we are going to look for the distribution of the number of fires in a grid during a month.
@@ -708,85 +672,91 @@ First, to analyze the spread of a fire, we are going to look for the distributio
 
 
 ```{r,echo = FALSE}
-hist = hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1))
+hist <- hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1), main=" Number of fires in a grid per month", xlab="Fires ", ylab=" Frequency")
 ```
 
 
-We remark that there most of the values next to 0 and because of the outliers we can't see the distribution very good. So we are going to filter the outliers to have a better view of the distribution 
+We remark that there most of the values next to 0 and because of the outliers we can't see the distribution very good. So we are going to filter the outliers to have a better view of the distrubution 
 
 
 ```{r, echo = FALSE}
 df1 <-df%>% filter(CNT<20)
-hist = hist(df1$CNT, breaks = seq(-0.5, max(df1$CNT)+0.5, 1))
+hist = hist(df1$CNT, breaks = seq(-0.5, max(df1$CNT)+0.5, 1), main= "Number of fires in a grid per month", xlab = "Fires")
 ``` 
 
 
 Now, since we want to predict the spread of a fire given the land covers data, let's plot the distribution of the number of fire according to each land cover variable. 
 
+```{r, echo = FALSE}
+sample <- df [sample(1:nrow(df),10000),]
+#1
+plot1 <- ggplot ()+
+  geom_point(data = sample, aes(x = lc1, y= CNT))
+#2
+plot2 <-ggplot ()+
+  geom_point(data = sample, aes(x = lc2, y= CNT))
+#3
+plot3 <-ggplot ()+
+  geom_point(data = sample, aes(x = lc3, y= CNT))
+#4
+plot4 <-ggplot ()+
+  geom_point(data = sample, aes(x = lc4, y= CNT))
+#5
+plot5 <-ggplot ()+
+  geom_point(data = sample, aes(x = lc5, y= CNT))
+#6
+plot6 <-ggplot ()+
+  geom_point(data = sample, aes(x = lc6, y= CNT))
+#7
+plot7<- ggplot ()+
+  geom_point(data = sample, aes(x = lc7, y= CNT))
+#8
+plot8<-ggplot ()+
+  geom_point(data = sample, aes(x = lc8, y= CNT))
+#9
+plot9<-ggplot ()+
+  geom_point(data = sample, aes(x = lc9, y= CNT))
+#10
+plot10<-ggplot ()+
+  geom_point(data = sample, aes(x = lc10, y= CNT))
+#11
+plot11<-ggplot ()+
+  geom_point(data = sample, aes(x = lc11, y= CNT))
+#12
+plot12<-ggplot ()+
+  geom_point(data = sample, aes(x = lc12, y= CNT))
+#13
+plot13<-ggplot ()+
+  geom_point(data = sample, aes(x = lc13, y= CNT))
+#14
+plot14<-ggplot ()+
+  geom_point(data = sample, aes(x = lc14, y= CNT))
+#15
+plot15<-ggplot ()+
+  geom_point(data = sample, aes(x = lc15, y= CNT))
+#16
+plot16<- ggplot ()+
+  geom_point(data = sample, aes(x = lc16, y= CNT))
+#17
+plot17 <-ggplot ()+
+  geom_point(data = sample, aes(x = lc17, y= CNT))
+#18
+plot18 <-ggplot ()+
+  geom_point(data = sample, aes(x = lc18, y= CNT))
+cowplot::plot_grid(plot1, plot2, plot3, plot4,plot5, plot6, plot7,plot8,plot9, labels = "AUTO")
+```
 
-```{r knit problem, message = FALSE}
-# #1
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc1, y= CNT))
-# #2
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc2, y= CNT))
-# #3
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc3, y= CNT))
-# #4
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc4, y= CNT))
-# #5
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc5, y= CNT))
-# #6
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc6, y= CNT))
-# #7
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc7, y= CNT))
-# #8
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc8, y= CNT))
-# #9
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc9, y= CNT))
-# #10
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc10, y= CNT))
-# #11
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc11, y= CNT))
-# #12
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc12, y= CNT))
-# #13
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc13, y= CNT))
-# #14
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc14, y= CNT))
-# #15
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc15, y= CNT))
-# #16
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc16, y= CNT))
-# #17
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc17, y= CNT))
-# #18
-# ggplot ()+
-#   geom_point(data = df, aes(x = lc18, y= CNT))
+
+```{r, echo = FALSE}
+cowplot::plot_grid(plot10,plot11,plot12,plot13,plot14,plot15,plot16,plot17,plot18, labels = "AUTO")
 ```
 
 
 In this section, we try to model the fact that there was a fire in a grid for a given month  given the land cover specification of the grid. The problem is that we have the number of fire in the grid. One can think of using the zero inflated Poisson regression. In fact, the zero inflated Poisson is used to count data with excess zeros and overdispersion, which describe well our data. It combines the Poisson distribution and the logit distribution.
 
 
-```{r knit problem 2, message = FALSE}
-# summary(m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18, data = df))
+```{r, echo = FALSE}
+summary(m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18, data = df))
 ```
 
 
