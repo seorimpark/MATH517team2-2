@@ -106,6 +106,8 @@ library('psych')
 library(bookdown)
 library(quantreg)
 library(latex2exp)
+library(cowplot)
+library(reshape2)
 ````
 
 ## Exploratory Data Analysis
@@ -116,11 +118,23 @@ data_withNA = data_train_DF
 data<-data_withNA %>% drop_na()
 ```
 
-When considering only rows without missing values, we are left with  452930 rows. The dataset can be summarised as follows:
+When considering only rows without missing values, we are left with  452930 rows. 
 
-```{r, echo=FALSE}
-summary(data)
+```{r,echo=FALSE}
+summary(data[1:2])
 ```
+(add comments about this summary)
+
+As stated in the data description, the propotions of the 18 landcovers don't always add up to one. Looking at Figure() and at the summary below, we can see that the minimum value for the sum is 0.82. We can also see from the 1st Quantile value that only 25% of the data has a sum below 0.9968. We therefore continue with the data considering it is close enough.  
+
+```{r,echo=FALSE}
+lc_sum<-rowSums(data_withNA[,8:25])
+summary(lc_sum)
+```
+```{r,echo=FALSE}
+histogram(lc_sum, main="Sum of propotion of the land covers for each location",xlab='sum')
+```
+
 ```{r,echo=FALSE}
 stacked_df1 <- stack(data[,8:25])
 # Boxplot from the R trees dataset
