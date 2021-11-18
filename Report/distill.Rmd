@@ -36,10 +36,23 @@ In order to reduce the number and the severity of wildfires, understanding the m
 In addition, those factors change as the time goes by, and they generate a better or worse conditions for wildfires to happen. For instance, global warming is highly suspected to be one of the main reasons why the wildfires were more recurrent in the recent days @globalWarming. Countries have to undergo climate changes, and those unexpected events can be the seed of the recent disasters.
 
 ### Research questions
+In this investigation, we set out to answer the following questions. 
+
+
+
+1. How have the number of fires in the United State evolved with time since 1993
+
+2. Next, we look for how the land cover vary over time. 
+
+3. We then investigate on what are the main factors that are at the origin of wildfires  
+
+4. How are fires distributed across the land covers and meteorological factors ?
 
 
 ### Approaches
-
+To answer the above questions we will proceed as follows. 
+A descriptive and visual approach where we will produce interactive plots with information on the different dimensions : geographically temporally and by different factors. Afterward we look to the distribution of land covers. We notice there is a change of the distribution and try to analyse these changes throughout time. We will then proceed with the analysis of the number of fires. 
+To do so, we look at the land covers and meteorological parameters. We noticed that the correlation was low, we used subsets and we did a quantile regression. 
 
 ## Sources of information / datasets
 The dataset contains 563,983 rows for 37 columns. The columns are the following:
@@ -759,6 +772,9 @@ In this section, we try to model the fact that there was a fire in a grid for a 
 summary(m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18, data = df))
 ```
 
+
+
+Below, you can find a block of output containing Poisson regression coefficients for each of the variables along with the standard errors, z-score and p-values for the coefficients. A second block follows with the inflation model which includes logit coefficients for predicting excess zeros. All of the predictions in both the count and inflation portion are statistically significant ( all p-values are very small) except for the land cover 3 in the count model. But otherwise this means that the null hypothesis that the coefficient is equal to 0 is rejected for all the coefficients.This means that this model fits the data significantly better than the null model.
 
 
 ## Wildfires and meteorogical factors
