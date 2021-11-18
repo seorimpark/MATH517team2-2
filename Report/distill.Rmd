@@ -29,33 +29,34 @@ options(knitr.duplicate.label = "allow")
 
 ## Introduction
 
-Wildfires are uncontrolled fires that burns in the wildland vegetation, often in rural areas. They are not limited to a particular continent or environment, and burned different kinds of ecosystems for hundred of millions of years on Earth @definitionWilfires. The problem of wildfires is at the stake all over the world, along with the topic of climate change and preservation of nature and ecosystems. There has been several major cases of wildfires recently, increasing in the number and the severity : for instance, the California wildfires in 2020 became one of the largest wildfire season in the California history @californiaWildfire with several millions of acres burnt @burntArea. Also, Turkey went through the worst wildfire season of the country in July and August 2021 @wildfireTurkey, and the 2019-2020 bushfires in Australia (also known as the Black Summer) killed several billions of animals. A lot of them were endangered species, which some were believed to be driven to extinction from this incidence. @wildfireAus. Therefore, a lot of countries aim at minimizing the size and the number of occurrences of wildfires, since they can be the cause of many direct and indirect fatalities in humans @fatalities, as well as air pollution @airPollution and the loss of ecosystems and biodiversity (the case of Black Summer). 
+Wildfires are uncontrolled fires that burns in the wildland vegetation, often in rural areas. They are not limited to a particular continent or environment, and burned different kinds of ecosystems for hundred of millions of years on Earth (@definitionWilfires). The problem of wildfires is at the stake all over the world, along with the topic of climate change and preservation of nature and ecosystems. There has been several major cases of wildfires recently, increasing in the number and the severity : for instance, the California wildfires in 2020 became one of the largest wildfire season in the California history (@californiaWildfire) with several millions of acres burnt (@burntArea). Also, Turkey went through the worst wildfire season of the country in July and August 2021 (@wildfireTurkey), and the 2019-2020 bushfires in Australia (also known as the Black Summer) killed several billions of animals. A lot of them were endangered species, which some were believed to be driven to extinction from this incidence (@wildfireAus). Therefore, a lot of countries aim at minimizing the size and the number of occurrences of wildfires, since they can be the cause of many direct and indirect fatalities in humans (@fatalities), as well as air pollution (@airPollution) and the loss of ecosystems and biodiversity (the case of Black Summer). 
 
 In order to reduce the number and the severity of wildfires, understanding the main factors at the origin of the catastrophy is necessary. The incidences are very often caused accidentally (burning debris, agricultural activities, campfires, smoking), or intentionally (arson, children). Although the latter case can be prevented, human or non-human accidents can always happen and they are hard to predict @causes. However, we can suspect that there are certain natural conditions that make those accidents easier to happen and to grow them bigger in size. By identifying them, the states can build a strategy to efficiently suppress wildfire once it happens, and get prepared to fight against for locations that are highly possible to catch fire at a certain period of the year. 
 
 In addition, those factors change as the time goes by, and they generate a better or worse conditions for wildfires to happen. For instance, global warming is highly suspected to be one of the main reasons why the wildfires were more recurrent in the recent days @globalWarming. Countries have to undergo climate changes, and those unexpected events can be the seed of the recent disasters.
 
 ### Research questions
-In this investigation, we set out to answer the following questions. 
+In this investigation, we set out to answer the following questions: 
 
 
 
-1. How have the number of fires in the United State evolved with time since 1993
+1. How have the number of fires in the United States of America evolved with time since 1993?
 
-2. Next, we look for how the land cover vary over time. 
+2. How do the land covers vary over time? 
 
-3. We then investigate on what are the main factors that are at the origin of wildfires  
+3. What are the main factors that cause wildfires ? 
 
-4. How are fires distributed across the land covers and meteorological factors ?
+4. How are fires distributed across the land covers and meteorological factors?
 
 
 ### Approaches
 To answer the above questions we will proceed as follows. 
-A descriptive and visual approach where we will produce interactive plots with information on the different dimensions : geographically temporally and by different factors. Afterward we look to the distribution of land covers. We notice there is a change of the distribution and try to analyse these changes throughout time. We will then proceed with the analysis of the number of fires. 
-To do so, we look at the land covers and meteorological parameters. We noticed that the correlation was low, we used subsets and we did a quantile regression. 
+A descriptive and visual approach where we will produce interactive plots with information on the different dimensions : geographically temporally and by different factors. 
+Afterward we will look at the distribution of land covers. We will also analyse the variation of land covers in the same location since we noticed it changed in some areas. 
+We will then proceed with the analysis of the number of fires. To do so, we will look at the land covers and meteorological parameters. We noticed that the correlation between parameters was low, we used subsets and we did a quantile regression. 
 
 ## Sources of information / datasets
-The dataset contains 563,983 rows for 37 columns. The columns are the following:
+To perform this analysis, we use a dataset for the United States from 1993 to 2015. It contains 563,983 rows with 37 columns. The columns are the following:
 
 * CNT – number of wildfires 
 * BA – aggregated burnt area of wildfires in acres 
@@ -136,7 +137,8 @@ When considering only rows without missing values, we are left with  452930 rows
 ```{r,echo=FALSE}
 summary(data[1:2])
 ```
-(add comments about this summary)
+
+We can see from the summary that wildfires remain relatively rare events with more than 75% of locations have less than 2 fires per month considering the feature CNT. Same applies for the feature BA representing aggregated burnt area, where the distribution is strongly positively skewed. 
 
 As stated in the data description, the propotions of the 18 landcovers don't always add up to one. Looking at Figure() and at the summary below, we can see that the minimum value for the sum is 0.82. We can also see from the 1st Quantile value that only 25% of the data has a sum below 0.9968. We therefore continue with the data considering it is close enough.  
 
@@ -154,23 +156,12 @@ stacked_df1 <- stack(data[,8:25])
 colnames(stacked_df1)<-c("distribution", "landcover")
 boxplot(stacked_df1$distribution ~ stacked_df1$landcover, main="Distribution of land covers",lwd = 0.4,alpha = 0.3,horizontal = TRUE,  xlab="percentages", ylab="land covers",outline=FALSE)
 ```
-In Figure(), we can see the distribution of land covers using Boxplot. We can see that most of the land cover represent less than 10% of the the area considered. Meaning that the area considered are very diverse. 
+In Figure(), we can see the distribution of land covers using Boxplot. We can see that most of the land cover represent less than 10% of the the area considered. Meaning that the areas considered are very diverse. 
 
 
 We decided transform the temperature from Kelvin to Celsius. We also decide to aggregate the U-component of wind (the wind speed in Eastern direction) 
 and V-component of wind (the wind speed in Northern direction) and use the euclidian norm of the vector:
 $$Wind_{speed_{new}}=\sqrt{Wind_{speed_{East}}^2 + Wind_{speed_{West}}^2 }$$
-
-
-# add references to the introduction to the bibliography and mention it is majorly inspired by the one present on the website:
-Wildfires are uncontrolled fires of fuel materials composed of mostly natural vegetation, such as woods or shrublands. They represent an environmental threat with major impacts all over the world, and their frequency of outbreak and severity are expected to increase with global warming Jones et al. 2020. Each year, wildfires cause many direct fatalities in humans, as well as extreme air pollution events and loss of both biodiversity and other valuable ecosystem services. They also contribute a substantial fraction of global greenhouse gas emissions each year, so they can further worsen climate change. The modeling of wildfires has been approached using a wide variety of statistical approaches (see, e.g., Preisler et al. 2004, Pereira & Turkman 2019, Xi et al. 2019), some of which employ extreme value theory (see, e.g., Pereira & Turkman 2019).
-
-As for the origin of wildfire starts, lightning is the main natural cause, but in the overwhelming majority of cases, human activities are responsible. They can be intentional (arson, children) or accidental (burning debris, agricultural activities, campfires, smoking). In general, wildfires are the result of a combination of the presence of combustible materials (e.g., a forest), their easy flammability (e.g., as a result of extreme weather conditions such as droughts), and a triggering event (e.g., lightning or human activity). In most fire-prone regions of the world, wildland fire activity has seasonal cycles due to the seasonality of favorable weather conditions.
-
-To assist in wildland fire management, it is essential to understand and predict the risk factors that contribute to wildland fires and their spatial and seasonal distribution. Wildland fire management involves a multitude of tasks, including monitoring forest ecosystems, deploying preventative measures, firefighting logistics, and short-term forecasting and long-term projections of wildland fire activity.
-
-With the chosen data set, we can concentrate on two important components of wildland fire activeness: fire occurrence and fire magnitude. Given a region of space and time, we consider the number of spatially separated wildfire events as an observation with respect to the first aspect (occurrence), and the aggregate burned area of wildfires originating from the area of interest as an observation with respect to the second aspect (size). 
-
 
 ## Visualisation and interactive / animated maps
 
@@ -188,7 +179,7 @@ data<-data_withNA %>% drop_na()
 columns_correlation<-c(1,8:25)
 corrplot(cor(data[,columns_correlation]), method = "color")
 ```
-We want to determine if there is a significant correlation between the different land covers and the appearance of fires. In order to do so, we use a database filtered of missing data.  As can be seen in Figure (?), the correlation between the fire and the land cover remains very low. To confirm this statement, we plot in Figure(?) the variables that have been defined as highly correlated in red and the rest in light blue. We can then see that there is no strong correlation between the columns nor between the columns and the apparition of the fires. We define a correlation as strong when its absolute value exceeds 0.8. 
+We want to determine if there is a significant correlation between the different land covers and the appearance of fires. In order to do so, we use a database filtered of missing data.  As can be seen in Figure (?), the correlation between the fire and the land cover remains very low. To confirm this statement, we plot in Figure(?) the variables that have been defined as highly correlated in red and the rest in light blue. We can then see that there is no strong correlation between the features nor between the features and the apparition of the fires. We define a correlation as strong when its absolute value exceeds 0.8. 
 
  
 We can nonetheless note that, besides being small, the correlation between the apparation of fires  and  cropland rainfed herbaceous cover, mosaic cropland, shrubland, grassland, bare areas and water is negative, while the correlation with mosaic natural vegetation, tree broadleaved evergreen closed to open, tree broadleaved deciduous closed to open, tree needleleave evergreen closed to open, tree needleleaved deciduous closed to open, tree mixed, mosaic tree and shrub, sparse vegetation, tree cover flooded fresh or brakish water, shrub or herbaceous cover flooded and urban areas is positive. 
@@ -446,7 +437,7 @@ names = c('cropland rainfed',
 
 
 
-We will first proceed by representing the territory according to the predominant type of coverage. Figure () shows this arrangement in the year 2000. We observe that water dominates the maritime borders, tree broadleaved are predominant in the east of the country while the west is dominated by tree needleleave. We can easily identify the cities of New York, Los angeles and other large cities by their predominance of urban space.
+We will first proceed by representing the territory according to the predominant type of coverage. Figure () shows this arrangement in 2000. We observe that water dominates the maritime borders, tree broadleaved are predominant in the east of the country while the west is dominated by tree needleleave. We can easily identify the cities of New York, Los angeles and other large cities by their predominance of urban space.
 
 
 
@@ -536,10 +527,16 @@ p
 ```
 In Figure (), we notive that the highest occurency for fires happen in Florida and Georgia in the South East, in New Jersey in the East coast and all along the West coast. These areas are characterised by the predominance fo bradleaved evergreen closed to open trees. 
 This observation can be explained by the effect of climbing fire -- the easy inflammable land covers e.g. grassland and shrubs act as a ladder to higher land cover with higher fuel capacity as trees. 
-Usually, ``the forests are more prone to the fire only when there is a particularly low near-surface SM (soil moisture), most likely from moderate to extensive drought'' @schaefer2019land.
+Usually, 'the forests are more prone to the fire only when there is a particularly low near-surface SM (soil moisture), most likely from moderate to extensive drought' (@schaefer2019land).
+
+
 Also, we can observe that the closeness of urban land cover is correlated with occurrence of wildfires (For instance near New York city and Los Angeles), meaning that the human activity can be the trigger of wildfires. Other commonly known trigger of wildfires is the presence of dry thunderstorms with high activity of cloud-to-ground flashes. This mentioned trigger is usually the cause of the higher frequency of big wildfires in the Pacific Coast.
-The combination of grassland (with needle-leaved trees might be dangerous as can be visible on the Fig() and Fig().
-The presence of needle-leaved trees for wildfires is crucial, since the trees are closer to each-other and the dead branches on the floor with sap provide enough fuel to higher spread of wildfire. Moreover, the land cover of deciduous trees can be especially dangerous in the early spring. The article by Barros et al. @barros2014wildfire studying the fire selectivity in Portugal suggests that the selectivity for wildfire counts is higher for shrublands, grasslands and conifers, but lower for agricultural areas such as cropland. This suggestion seems to be confirmed in the US by the early observations of the Figures () and ().
+
+
+The combination of grassland with needle-leaved trees might be dangerous as can be visible on the Fig() and Fig().
+
+
+The presence of needle-leaved trees for wildfires is crucial, since the trees are closer to each-other and the dead branches on the floor with sap provide enough fuel to higher spread of wildfire. Moreover, the land cover of deciduous trees can be especially dangerous in the early spring. The article by Barros et al. (@barros2014wildfire) studying the fire selectivity in Portugal suggests that the selectivity for wildfire counts is higher for shrublands, grasslands and conifers, but lower for agricultural areas such as cropland. This suggestion seems to be confirmed in the US by the early observations of the Figures () and ().
 
 ```{r, echo=FALSE}
 
@@ -559,7 +556,7 @@ p
 ```
 
 
-To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant type of space at least once. Indeed in Figure (), we see that the shift values start at 1. We also see that the shifts do not exceed 5, knowing that this measurement is taken over 22 years, this is still relatively low. 
+To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant landcover at least once. Indeed in Figure (), we see that the shift values start at 1. We also see that the shifts do not exceed 5, knowing that this measurement is taken over 22 years, this is still relatively low. Note that we will not further research on the reason behind these changes during this project due to lack of time.
 
 ### Land covers and meteorogical correlation
 
@@ -573,7 +570,7 @@ df<-df[!is.na(df$BA),]
 ```
 
 
-We want to understand the correlation between land cover and meteorological variables. To do so, we are going to clean our data first, rename the variables by their description so that we can easily analyze our results and then compute the correlation between the variables. The problem is that when trying to output the matrix, we get a warning saying that the matrix is too big. To get an idea of what variable can be highly related we are going to output the correlation between a pair of land cover and meteorological variable when it is bigger than a threshold manually set.
+We want to understand the correlation between land covers and meteorological variables. To do so, we are going to clean our data first, rename the variables by their description so that we can easily analyze our results and then compute the correlation between the variables. The problem is that when trying to output the matrix, we get a warning saying that the matrix is too big. To get an glimpse of what variable can be highly related, we are going to output the correlation between a pair of land cover and meteorological variable when it is bigger than a threshold manually set.
 
 
 ```{r, echo = FALSE}
@@ -624,7 +621,7 @@ corr18 =FindCorForLC(18,"pearson",0.6)
 ```
 
 
-Here, we choose a threshold of 0.6 and none of the correlations has been outputted except one. This means that those who hasn't been printed are less that 0.6. We get that the correlation between the shrublands and the surface net thermal radiation is of -0.72. This seems normal: the more radiation is issued by the surface, the less shrub we get. But the results are not as good as we wanted. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the correlation is not linear here. So we are going to compute the correlation with spearman method to see if the relation between the variables is monotonic. 
+Here, we choose a threshold of 0.6 and none of the correlations has been displayed except one. This means that those who haven't been printed are less that 0.6. We get that the correlation between the shrublands and the surface net thermal radiation is of -0.72. This seems normal: the more radiation is issued by the surface, the less shrub we get. But the results are not as good as expected. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the dependence is not linear here. So we are going to compute the correlation with spearman method to see if the relation between the variables is monotonic. 
 
 
 ```{r, echo = FALSE}
@@ -649,7 +646,7 @@ corr18 = FindCorForLC(18,"spearman",0.6)
 ```
 
 
-Now by changing the method, we observe that we get that the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated, same result as earlier. And, we also get that the water, urban and surface pressure are correlated. The pressure in the water is higher that the atmospheric pressure and increases with the depth. The pollution of the air explains the positive correlation between urban lands and surface pressure. To visualize our results and try to show more, we are going to regroup our data so that we can compute a correlation matrix. We take variables of land cover that are similar and have a common characteristic and sum them together. 
+Now by changing the method, we observe that we get that the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated, same result as earlier. And, we also get that the water, urban and surface pressure are correlated. The pressure in the water is higher that the atmospheric pressure and increases with the depth. The pollution of the air explains the positive correlation between urban lands and surface pressure. To visualize our results and try to show more, we are going to regroup our data so that we can compute a correlation matrix. We take variables of land covers that are similar and have a common characteristic and sum them together. 
 
 
 ```{r, echo =FALSE}
@@ -689,7 +686,7 @@ hist <- hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1), main=" Number of fires i
 ```
 
 
-We remark that there most of the values next to 0 and because of the outliers we can't see the distribution very good. So we are going to filter the outliers to have a better view of the distrubution 
+We remark that most of the values are close to 0 and because of the outliers we can't see the distribution very good. So we are going to filter the outliers to have a better view of the distrubution 
 
 
 ```{r, echo = FALSE}
@@ -774,7 +771,7 @@ summary(m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13
 
 
 
-Below, you can find a block of output containing Poisson regression coefficients for each of the variables along with the standard errors, z-score and p-values for the coefficients. A second block follows with the inflation model which includes logit coefficients for predicting excess zeros. All of the predictions in both the count and inflation portion are statistically significant ( all p-values are very small) except for the land cover 3 in the count model. But otherwise this means that the null hypothesis that the coefficient is equal to 0 is rejected for all the coefficients.This means that this model fits the data significantly better than the null model.
+Below, you can find a block of output containing Poisson regression coefficients for each of the variables along with the standard errors, z-score and p-values for the coefficients. A second block follows with the inflation model which includes logit coefficients for predicting excess zeros. All of the predictions in both the count and inflation portion are statistically significant ( all p-values are very small) except for the land cover 3 in the count model. But otherwise this means that the null hypothesis that the coefficient is equal to 0 is rejected for all the coefficients. This means that this model fits the data significantly better than the null model.
 
 
 ## Wildfires and meteorogical factors
