@@ -33,7 +33,7 @@ Wildfires are uncontrolled fires that burns in the wildland vegetation, often in
 
 In order to reduce the number and the severity of wildfires, understanding the main factors at the origin of the catastrophy is necessary. The incidences are very often caused accidentally (burning debris, agricultural activities, campfires, smoking), or intentionally (arson, children). Although the latter case can be prevented, human or non-human accidents can always happen and they are hard to predict @causes. However, we can suspect that there are certain natural conditions that make those accidents easier to happen and to grow them bigger in size. By identifying them, the states can build a strategy to efficiently suppress wildfire once it happens, and get prepared to fight against for locations that are highly possible to catch fire at a certain period of the year. 
 
-In addition, those factors change as the time goes by, and they generate a better or worse conditions for wildfires to happen. For instance, global warming is highly suspected to be one of the main reasons why the wildfires were more recurrent in the recent days @globalWarming. Countries have to undergo climate changes, and those unexpected events can be the seed of the recent disasters.
+In addition, those factors change as the time goes by, and they generate a better or worse conditions for wildfires to happen. For instance, global warming is highly suspected to be one of the main reasons why the wildfires were more recurrent in the recent days @globalWarming. Countries have been undergoing climate changes, and those unexpected events can be the seed of the recent disasters.
 
 ### Research questions
 In this investigation, we set out to answer the following questions: 
@@ -165,10 +165,34 @@ $$Wind_{speed_{new}}=\sqrt{Wind_{speed_{East}}^2 + Wind_{speed_{West}}^2 }$$
 
 ## Visualisation and interactive / animated maps
 
+Before exploring the different factors, we first plotted on the map the number of cases of wildfires (denoted as CNT) as well as the burnt area (denoted as BA) from it with respect to time to do a descriptive analysis of the data. We want to determine which States are the most affected by wildfires, and identify when they happen the most. 
+
+The given dataset had a list of different coordinates in the United States. To determine which coordinates belong to which state, we used the python library $\it{reverse\_geocoder}$. This library gives the closest address given the coordinates, so we took the name of the state out of it and added up the numbers and stored in a dictionary for each state. 
+
+To visualize the data well, we had to make several adjustments. First, we divided the number of incidences and the burnt area by the total area of the states to make a comparison. Then we multiplied the value by 10⁶ so that we get the number of wildfires/burnt area of the state per 10⁶km². Also, we realized that the obtained numbers could go from the order of $10^{-2}$ to $10^{3}$, so we took the log of them to have a reasonable color scale for each state. The final numbers for the plots are calculated in the following way :
+
+$$Final\_CNT_i=log_2\left(\frac{(\sum_{k=0}^{total\_number\_of\_coordinates\_in\_i}CNT_k)*10^6}{total\_area\_of\_i}+1\right)\; for\;i=\{list\;of\;US\;states\}$$
+$$Final\_BA_i=log_2\left(\frac{(\sum_{k=0}^{total\_number\_of\_coordinates\_in\_i}BA_k)*10^6}{total\_area\_of\_i}+1\right)\; for\;i=\{list\;of\;US\;states\}$$
+
+The numbers close to 0 are trivial, so we added 1 before taking the log to not have meaningless outliers with the scale starting with big negative numbers.
+
+
+In addition, we plotted the number of incidences/burnt area for each location in red scatter points with a size scale. To adjust the numbers, we used the log scale again. The numbers were obtained as follows:
+
+$$Local\_CNT_k=4log_2\left(CNT_k+1\right)\; for\;k=\{list\;of\;coordinates\}$$
+
+$$Local\_BA_k=2log_2\left(BA_k+1\right)\; for\;k=\{list\;of\;coordinates\}$$
+
+One main aspect that we can observe is that the number of incidences does not always match with the burnt area. For instance, on May 1993, Texas had about $10^3$ acres burnt per 10⁶km², but as shown on the Figure() , the number of incidences was not as huge compared to the burnt area seeing the number and the size of red dots in Texas. 
+
+![Plot in 05/1993](1.png)
+
+Figure()
+
 ## Wildfires over time
 
 ## Wildfires and the land cover:
-### Corrolation between Land covers and Wildfires:
+### Correlation between Land covers and Wildfires:
 ```{r, include=FALSE}
 load("../Data/data_train_DF.RData")
 data_withNA = data_train_DF
