@@ -29,18 +29,17 @@ options(knitr.duplicate.label = "allow")
 
 ## Introduction
 
-Wildfires are uncontrolled fires that burns in the wildland vegetation, often in rural areas. They are not limited to a particular continent or environment, and burned different kinds of ecosystems for hundred of millions of years on Earth (@definitionWilfires). The problem of wildfires is at the stake all over the world, along with the topic of climate change and preservation of nature and ecosystems. There has been several major cases of wildfires recently, increasing in the number and the severity : for instance, the California wildfires in 2020 became one of the largest wildfire season in the California history (@californiaWildfire) with several millions of acres burnt (@burntArea). Also, Turkey went through the worst wildfire season of the country in July and August 2021 (@wildfireTurkey), and the 2019-2020 bushfires in Australia (also known as the Black Summer) killed several billions of animals. A lot of them were endangered species, which some were believed to be driven to extinction from this incidence (@wildfireAus). Therefore, a lot of countries aim at minimizing the size and the number of occurrences of wildfires, since they can be the cause of many direct and indirect fatalities in humans (@fatalities), as well as air pollution (@airPollution) and the loss of ecosystems and biodiversity (the case of Black Summer). 
+Wildfires are uncontrolled fires that burn in the wildland vegetation, often in rural areas. They are not limited to a particular continent or environment, and burned different kinds of ecosystems for hundreds of millions of years on Earth (@definitionWilfires). The problem of wildfires is at the stake all over the world, along with the topic of climate change and preservation of nature and ecosystems. There has been several major cases of wildfires recently, growing in number and severity: for instance, the California wildfires in 2020 became one of the largest wildfire season in the California history (@californiaWildfire) with several millions of acres burnt (@burntArea). Also, Turkey went through the worst wildfire season of the country in July and August 2021 (@wildfireTurkey), and the 2019-2020 bushfires in Australia (also known as the Black Summer) killed several billions of animals. A lot of them were endangered species, which some were believed to be driven to extinction from this incidence (@wildfireAus). Therefore, a lot of countries aim at minimizing the size and the number of occurrences of wildfires, since they can be the cause of many direct and indirect fatalities in humans (@fatalities), as well as air pollution (@airPollution) and the loss of ecosystems and biodiversity (the case of Black Summer). 
 
-In order to reduce the number and the severity of wildfires, understanding the main factors at the origin of the catastrophy is necessary. The incidences are very often caused accidentally (burning debris, agricultural activities, campfires, smoking), or intentionally (arson, children). Although the latter case can be prevented, human or non-human accidents can always happen and they are hard to predict @causes. However, we can suspect that there are certain natural conditions that make those accidents easier to happen and to grow them bigger in size. By identifying them, the states can build a strategy to efficiently suppress wildfire once it happens, and get prepared to fight against for locations that are highly possible to catch fire at a certain period of the year. 
+In order to reduce the number and the severity of wildfires, understanding the main factors at the origin of the catastrophy is necessary. The incidences are very often caused accidentally (burning debris, agricultural activities, campfires, smoking), or intentionally (arson, children). Although the latter case can be prevented, human or non-human accidents can always happen and they are hard to predict (@causes). However, we can suspect that there are certain natural conditions that make those accidents easier to happen and to grow them bigger in size. By identifying them, the states can build a strategy to efficiently suppress wildfire once it happens, and get prepared to fight against for locations that are highly possible to catch fire at a certain period of the year. 
 
-In addition, those factors change as the time goes by, and they generate a better or worse conditions for wildfires to happen. For instance, global warming is highly suspected to be one of the main reasons why the wildfires were more recurrent in the recent days @globalWarming. Countries have been undergoing climate changes, and those unexpected events can be the seed of the recent disasters.
+In addition, those factors change as the time goes by, and they generate a better or worse conditions for wildfires to happen. For instance, global warming is highly suspected to be one of the main reasons why the wildfires were more recurrent in the recent days (@globalWarming). Countries have been undergoing climate changes, and those unexpected events can be the seed of the recent disasters.
 
 ### Research questions
 In this investigation, we set out to answer the following questions: 
 
 
-
-1. How have the number of fires in the United States of America evolved with time since 1993?
+1. How have the number of fires in the United States of America evolved with time from 1993 to 2015?
 
 2. How do the land covers vary over time? 
 
@@ -51,9 +50,9 @@ In this investigation, we set out to answer the following questions:
 
 ### Approaches
 To answer the above questions we will proceed as follows. 
-A descriptive and visual approach where we will produce interactive plots with information on the different dimensions : geographically temporally and by different factors. 
-Afterward we will look at the distribution of land covers. We will also analyse the variation of land covers in the same location since we noticed it changed in some areas. 
-We will then proceed with the analysis of the number of fires. To do so, we will look at the land covers and meteorological parameters. We noticed that the correlation between parameters was low, we used subsets and we did a quantile regression. 
+A descriptive and visual approach where we will produce interactive plots with information on different dimensions: geographically, temporally and by different factors. 
+Afterwards, we will look at the distribution of land covers. We will also analyse the variation of land covers in the same location since we noticed it changed in some areas. 
+We will then proceed with the analysis of the number of fires. To do so, we will look at the land covers and meteorological parameters. We noticed that the correlation between parameters was low, so we used subsets and performed a quantile regression. 
 
 ## Sources of information / datasets
 To perform this analysis, we use a dataset for the United States from 1993 to 2015. It contains 563,983 rows with 37 columns. The columns are the following:
@@ -92,8 +91,8 @@ Their denominations as given in the original dataset are as follows:
   * Dewpoint temperature (temperature at 2m from ground to which air must be cooled to become       saturated with water vapor, such that condensation ensues) (Kelvin)
   * Temperature (at 2m from ground) (Kelvin)
   * Potential evaporation (the amount of evaporation of water that would take place if a sufficient source of water were available) (m)
-  * Surface net solar radiation (net flux of shortwave radiation; mostly radiation coming from the sun) (J/m2)
-  * Surface net thermal radiation (net flux of longwave radiation; mostly radiation emitted by the surface) (J/m2)
+  * Surface net solar radiation (net flux of shortwave radiation; mostly radiation coming from the sun) (J/m<sup>2</sup>)
+  * Surface net thermal radiation (net flux of longwave radiation; mostly radiation emitted by the surface) (J/m<sup>2</sup>)
   * Surface pressure (Pa)
   * Evaporation (of water) (m)
   * Precipitation (m)
@@ -101,7 +100,7 @@ Their denominations as given in the original dataset are as follows:
 Please note that the area proportions lc1 to lc18 do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. 
 
 
-Since the original data was given under the context of a [prediction competition with the university of Edimburgh](https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge), there is a 8,000 of missing values in each of the columns CNT and BA. The missing values are not located necessarly in the same lines for the two features. 
+Since the original data was given under the context of a [prediction competition with the University of Edimburgh](https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge), there is a 8,000 of missing values in each of the CNT and BA columns. The missing values are not located necessarily in the same lines for the two features. 
 
 ````{r, include=FALSE}
 
