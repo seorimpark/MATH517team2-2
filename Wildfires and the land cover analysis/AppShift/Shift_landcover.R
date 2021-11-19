@@ -89,8 +89,8 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       helpText(style="text-align: justify;",
-               "This application allows you to visualize the change in distribution of the predominant landcover in the region over the years. Press Play for the animation.", 
-               HTML("<br/>")," Note that the area proportions of all the landcovers do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. "),
+               "This application allows you to visualize the change in distribution of the predominant land cover in the region over the years. Press Play for the animation.", 
+               HTML("<br/>")," Note that the area proportions of all the land covers do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. "),
       
       sliderInput(
         "Year", "Select the year",
@@ -104,7 +104,7 @@ ui <- fluidPage(
     
     # Show a plot of the generated distribution
     mainPanel(
-      tabPanel("Landcover Distribution", br(), plotOutput("distPlot"))
+      tabPanel("Land cover Distribution", br(), plotOutput("distPlot"))
     
     
     )))
