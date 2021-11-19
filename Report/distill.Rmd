@@ -55,49 +55,49 @@ Afterwards, we will look at the distribution of land covers. We will also analys
 We will then proceed with the analysis of the number of fires. To do so, we will look at the land covers and meteorological parameters. We noticed that the correlation between parameters was low, so we used subsets and performed a quantile regression. 
 
 ## Sources of information / datasets
-To perform this analysis, we use a dataset for the United States from 1993 to 2015. It contains 563,983 rows with 37 columns. The columns are the following:
+To perform this analysis, a dataset for the United States from 1993 to 2015 will be used. It contains 563,983 rows with 37 columns. The columns are the following:
 
-* CNT – number of wildfires 
-* BA – aggregated burnt area of wildfires in acres 
-* lon – longitude coordinate of grid cell center
-* lat – latitude coordinate of grid cell center
-* area – the proportion of a grid cell that overlaps the continental US (a value in (0,1], which can be smaller than 1 for grid cells on the boundary of the US territory)
-* month – month of observation (integer value between 3 and 9)
-* year – year of observation (integer value between 1 and 23, with 1 corresponding to year 1993 and 23 to year 2015)
-* lc1 to lc18: area proportion of 18 land cover classes in the grid cell. 
+* $CNT$ – number of wildfires 
+* $BA$ – aggregated burnt area of wildfires in acres 
+* $lon$ – longitude coordinate of grid cell center
+* $lat$ – latitude coordinate of grid cell center
+* $area$ – the proportion of a grid cell that overlaps the continental US (a value in (0,1], which can be smaller than 1 for grid cells on the boundary of the US territory)
+* $month$ – month of observation (integer value between 3 and 9)
+* $year$ – year of observation (integer value between 1 and 23, with 1 corresponding to year 1993 and 23 to year 2015)
+* $lc1$ to $lc18$: area proportion of 18 land cover classes in the grid cell. 
 Their denominations as given in the original dataset are as follows:
-  * lc1: cropland rainfed
-  * lc2: cropland rainfed herbaceous cover
-  * lc3: mosaic cropland
-  * lc4: mosaic natural vegetation
-  * lc5: tree broadleaved evergreen closed to open
-  * lc6: tree broadleaved deciduous closed to open
-  * lc7: tree needleleave evergreen closed to open
-  * lc8: tree needleleaved deciduous closed to open
-  * lc9: tree mixed
-  * lc10: mosaic tree and shrub
-  * lc11: shrubland
-  * lc12: grassland
-  * lc13: sparse vegetation
-  * lc14: tree cover flooded fresh or brakish water
-  * lc15: shrub or herbaceous cover flooded
-  * lc16: urban
-  * lc17: bare areas
-  * lc18: water
-* altiMean, altiSD: altitude-related variables given as mean and standard devation in the grid cell 
-* clim1 to clim10: monthly means of 10 meteorological variables in the grid cell. They present as follows:
+  * $lc1$: cropland rainfed
+  * $lc2$: cropland rainfed herbaceous cover
+  * $lc3$: mosaic cropland
+  * $lc4$: mosaic natural vegetation
+  * $lc5$: tree broadleaved evergreen closed to open
+  * $lc6$: tree broadleaved deciduous closed to open
+  * $lc7$: tree needleleave evergreen closed to open
+  * $lc8$: tree needleleaved deciduous closed to open
+  * $lc9$: tree mixed
+  * $lc10$: mosaic tree and shrub
+  * $lc11$: shrubland
+  * $lc12$: grassland
+  * $lc13$: sparse vegetation
+  * $lc14$: tree cover flooded fresh or brakish water
+  * $lc15$: shrub or herbaceous cover flooded
+  * $lc16$: urban
+  * $lc17$: bare areas
+  * $lc18$: water
+* $altiMean$, $altiSD$: altitude-related variables given as mean and standard devation in the grid cell 
+* $clim1$ to $clim10$: monthly means of 10 meteorological variables in the grid cell. They present as follows:
   * 10m U-component of wind (the wind speed in Eastern direction) (m/s)
   * 10m V-component of wind (the wind speed in Northern direction) (m/s)
-  * Dewpoint temperature (temperature at 2m from ground to which air must be cooled to become       saturated with water vapor, such that condensation ensues) (Kelvin)
-  * Temperature (at 2m from ground) (Kelvin)
-  * Potential evaporation (the amount of evaporation of water that would take place if a sufficient source of water were available) (m)
-  * Surface net solar radiation (net flux of shortwave radiation; mostly radiation coming from the sun) (J/m<sup>2</sup>)
-  * Surface net thermal radiation (net flux of longwave radiation; mostly radiation emitted by the surface) (J/m<sup>2</sup>)
-  * Surface pressure (Pa)
-  * Evaporation (of water) (m)
-  * Precipitation (m)
+  * $Dewpoint temperature$ (temperature at 2m from ground to which air must be cooled to become       saturated with water vapor, such that condensation ensues) (Kelvin)
+  * $Temperature$ (at 2m from ground) (Kelvin)
+  * $Potential evaporation$ (the amount of evaporation of water that would take place if a sufficient source of water were available) (m)
+  * $Surface net solar radiation$ (net flux of shortwave radiation; mostly radiation coming from the sun) (J/m<sup>2</sup>)
+  * $Surface net thermal radiation$ (net flux of longwave radiation; mostly radiation emitted by the surface) (J/m<sup>2</sup>)
+  * $Surface pressure$ (Pa)
+  * $Evaporation$ (of water) (m)
+  * $Precipitation$ (m)
   
-Please note that the area proportions lc1 to lc18 do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. 
+Please note that the area proportions $lc1$ to $lc18$ do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. 
 
 
 Since the original data was given under the context of a [prediction competition with the University of Edimburgh](https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge), there is a 8,000 of missing values in each of the CNT and BA columns. The missing values are not located necessarily in the same lines for the two features. 
@@ -131,15 +131,15 @@ data_withNA = data_train_DF
 data<-data_withNA %>% drop_na()
 ```
 
-When considering only rows without missing values, we are left with  452930 rows. 
+When considering only rows without missing values, 452930 rows remain. 
 
 ```{r,echo=FALSE}
 summary(data[1:2])
 ```
 
-We can see from the summary that wildfires remain relatively rare events with more than 75% of locations have less than 2 fires per month considering the feature CNT. Same applies for the feature BA representing aggregated burnt area, where the distribution is strongly positively skewed. 
+As shown in the summary, wildfires remain relatively rare events with more than 75% of locations have less than 2 fires per month considering the feature $CNT$. Same applies for the feature $BA$ representing aggregated burnt area, where the distribution is strongly positively skewed. 
 
-As stated in the data description, the propotions of the 18 landcovers don't always add up to one. Looking at Figure() and at the summary below, we can see that the minimum value for the sum is 0.82. We can also see from the 1st Quantile value that only 25% of the data has a sum below 0.9968. We therefore continue with the data considering it is close enough.  
+As stated in the data description, the propotions of the 18 landcovers don't always add up to one. Looking at Figure() and at the summary below, we can see that the minimum value for the sum is 0.82. It is also seen from the 1st Quantile value that only 25% of the data has a sum below approx 0.99. We therefore continue with the data considering it is close enough.  
 
 ```{r,echo=FALSE}
 lc_sum<-rowSums(data_withNA[,8:25])
@@ -153,14 +153,16 @@ histogram(lc_sum, main="Sum of propotion of the land covers for each location",x
 stacked_df1 <- stack(data[,8:25])
 # Boxplot from the R trees dataset
 colnames(stacked_df1)<-c("distribution", "landcover")
-boxplot(stacked_df1$distribution ~ stacked_df1$landcover, main="Distribution of land covers",lwd = 0.4,alpha = 0.3,horizontal = TRUE,  xlab="percentages", ylab="land covers",outline=FALSE)
+boxplot(stacked_df1$distribution ~ stacked_df1$landcover, main="Distribution of land covers",lwd = 0.4,alpha = 0.3, xlab="percentages", ylab="land covers",outline=FALSE)
+#horizontal = TRUE, 
 ```
-In Figure(), we can see the distribution of land covers using Boxplot. We can see that most of the land cover represent less than 10% of the the area considered. Meaning that the areas considered are very diverse. 
+In Figure() is displayed the distribution of land covers using Boxplot. We can see that most of the land cover represent less than 10% of the the area considered. Meaning that the areas considered are very diverse. 
 
 
-We decided transform the temperature from Kelvin to Celsius. We also decide to aggregate the U-component of wind (the wind speed in Eastern direction) 
-and V-component of wind (the wind speed in Northern direction) and use the euclidian norm of the vector:
-$$Wind_{speed_{new}}=\sqrt{Wind_{speed_{East}}^2 + Wind_{speed_{West}}^2 }$$
+Some transformations on the features were made: first the temperature was converted from Kelvin to Celsius. Next, the U-component of wind (the wind speed in Eastern direction) 
+and V-component of wind (the wind speed in Northern direction)  were aggregated using the euclidian norm of the vector:
+$$Wspeed_{new}=\sqrt{Wspeed_{East}^2 + Wspeed_{West}^2 }$$
+with Wspeed the wind speed.
 
 ## Visualisation and interactive / animated maps
 
