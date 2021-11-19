@@ -121,7 +121,19 @@ library(quantreg)
 library(latex2exp)
 library(cowplot)
 library(reshape2)
+library(xtable)
+library(kableExtra)
+library(knitr)
 ````
+
+```{r,include=FALSE}
+tex2markdown <- function(texstring) {
+  writeLines(text = texstring,
+             con = myfile <- tempfile(fileext = ".tex"))
+  texfile <- pandoc(input = myfile, format = "html")
+  cat(readLines(texfile), sep = "\n")
+  unlink(c(myfile, texfile))}
+```
 
 ## Exploratory Data Analysis
 
@@ -134,18 +146,40 @@ data<-data_withNA %>% drop_na()
 When considering only rows without missing values, 452930 rows remain. 
 
 ```{r,echo=FALSE}
-summary(data[1:2])
+summaru_cnt_ba<-xtable(summary(data[1:2]))
+kable(summaru_cnt_ba)
 ```
+
 
 As shown in the summary, wildfires remain relatively rare events with more than 75% of locations have less than 2 fires per month considering the feature $CNT$. Same applies for the feature $BA$ representing aggregated burnt area, where the distribution is strongly positively skewed. 
 
 As stated in the data description, the propotions of the 18 landcovers don't always add up to one. Looking at Figure() and at the summary below, we can see that the minimum value for the sum is 0.82. It is also seen from the 1st Quantile value that only 25% of the data has a sum below approx 0.99. We therefore continue with the data considering it is close enough.  
 
-```{r,echo=FALSE}
+```{r,include=FALSE}
 lc_sum<-rowSums(data_withNA[,8:25])
 summary(lc_sum)
+
 ```
-```{r,fig.width=7, fig.height=7,echo=FALSE}
+
+```{=latex}
+\begin{table}[ht]
+\centering
+\begin{tabular}{rll}
+  \hline
+ &      Sum Lc  \\ 
+  \hline
+X & Min.   :  0.8222     \\ 
+  X.1 & 1st Qu.:  0.9968     \\ 
+  X.2 & Median :   0.9990      \\ 
+  X.3 & Mean   :  0.9966    \\ 
+  X.4 & 3rd Qu.:  0.9998  \\ 
+  X.5 & Max.   :1.0000     \\ 
+   \hline
+\end{tabular}
+\end{table}
+```
+
+```{r,echo=FALSE}
 histogram(lc_sum, main="Sum of propotion of the land covers for each location",xlab='sum')
 ```
 
@@ -202,15 +236,18 @@ data<-data_withNA %>% drop_na()
 
 ```{r,fig.width=7, fig.height=7,echo=FALSE}
 columns_correlation<-c(1,8:25)
-corrplot(cor(data[,columns_correlation]), method = "color")
+corrplot(cor(data[,columns_correlation]), method = "color", addCoef.col="black", tl.cex = 0.8, cl.cex = 0.8,
+               number.cex = 0.7, number.digits = 2)
+
 ```
-We want to determine if there is a significant correlation between the different land covers and the appearance of fires. In order to do so, we use a database filtered of missing data.  As can be seen in Figure (?), the correlation between the fire and the land cover remains very low. To confirm this statement, we plot in Figure(?) the variables that have been defined as highly correlated in red and the rest in light blue. We can then see that there is no strong correlation between the features nor between the features and the apparition of the fires. We define a correlation as strong when its absolute value exceeds 0.8. 
+
+The next step is to determine if there is a significant correlation between the different land covers and the appearance of fires. In order to do so, we use a database filtered of missing data. As can be seen in Figure (?), the correlation between the fire and the land cover remains very low. Considering that a correlation is strong when its absolute value exceeds 0.8, there is no strong correlation between the features nor between the features and the apparition of the fires. 
 
  
 We can nonetheless note that, besides being small, the correlation between the apparation of fires  and  cropland rainfed herbaceous cover, mosaic cropland, shrubland, grassland, bare areas and water is negative, while the correlation with mosaic natural vegetation, tree broadleaved evergreen closed to open, tree broadleaved deciduous closed to open, tree needleleave evergreen closed to open, tree needleleaved deciduous closed to open, tree mixed, mosaic tree and shrub, sparse vegetation, tree cover flooded fresh or brakish water, shrub or herbaceous cover flooded and urban areas is positive. 
 
 
-```{r,fig.width=7, fig.height=7,echo=FALSE}
+```{r,include=FALSE}
 matrix_cor<-cor(data[,columns_correlation])
 
 track_highly_correlated_columns <- function(matrix,threshold) {
@@ -253,7 +290,7 @@ This section will address the distribution of land covers over time. To do so, t
 In Figure (), we can see the exact location of the studied point on the map of the United States.
 
 
-```{r,fig.width=7, fig.height=7, include=FALSE}
+```{r, include=FALSE}
 filter_year<-function(data,year){
     if(year %in% unique(data$year)){
         data_filtered<-data %>% filter(year == year)
@@ -298,7 +335,7 @@ lc_from_place<-function(df, lon_,lat_, lc_)
 
 ```
  
-```{r,fig.width=7, fig.height=7,echo=FALSE}
+```{r,echo=FALSE}
 
         distLat <- 34.3
         distLon <--118.3
@@ -329,7 +366,7 @@ lc_from_place<-function(df, lon_,lat_, lc_)
 In Figure (), we can see the distribution of the land covers with time. We can see that the proportions are relatively stable and consistent with time. The predominant cover is the $urban area$ with 31% of the surface in 1993 this proportion only increases with time. 
 
 
-```{r,fig.width=7, fig.height=7,echo=FALSE}
+```{r,echo=FALSE}
         df <- NULL
         max<-0
         indice<-0
@@ -349,10 +386,10 @@ In Figure (), we can see the distribution of the land covers with time. We can s
 ```
 
 
-Although in this particular example of Malibu, the proportion of different land covers seems consistent, this is not always the case. Taking the coordinates in Figure () in Wisconsin,  we can see that the proportions change drastically depending on the year. The percentage of land representing $tree broadleaved evergreen closed to open$ increases with time until it becomes the predominant one, while $shrub or herbaceous cover flooded$ decreases drastically with time as seen in Figure(). We will not analyze the reasons and parameters that may have motivated this change, but we will try to quantify this change in the next section. 
+Although in this particular example of Malibu, the proportion of different land covers seems consistent, this is not always the case. Taking the coordinates in Figure () in Wisconsin,  it can seen that the proportions change drastically depending on the year. The percentage of land representing $tree broadleaved evergreen closed to open$ increases with time until it becomes the predominant one, while $shrub or herbaceous cover flooded$ decreases drastically with time as seen in Figure(). We will not analyze the reasons and parameters that may have motivated this change, but will try to quantify this change in the next section. 
 
 
-```{r,fig.width=7, fig.height=7,echo=FALSE}
+```{r,echo=FALSE}
 
         distLat <- 44.8
         distLon <--88.8
@@ -397,12 +434,12 @@ Although in this particular example of Malibu, the proportion of different land 
 ```
 
 
-To access the intarctive part, click [this link](https://zinebag.shinyapps.io/LandCovers/). In this app you will able to select the longitude and lattitude wanted and see the distribution of the land covers. 
+To access the interactive part, click [this link](https://zinebag.shinyapps.io/LandCovers/). In this app you will able to select the longitude and lattitude wanted and see the distribution of the land covers. 
 
 
 ### Predominant Land covers Analysis and Shifts:
 
-```{r,fig.width=7, fig.height=7, include= FALSE}
+```{r, include= FALSE}
 
 
 data = data_train_DF
@@ -462,26 +499,39 @@ names = c('cropland rainfed',
 
 
 
-We will first proceed by representing the territory according to the predominant type of coverage. Figure () shows this arrangement in 2000. We observe that $water$ dominates the maritime borders, $tree broadleaved$ are predominant in the east of the country while the west is dominated by tree needleleave. We can easily identify the cities of New York, Los angeles and other large cities by their predominance of urban space.
+Here will be represented the territory according to the predominant type of coverage. Figure () shows this arrangement in 2000; $water$ dominates the maritime borders, $tree broadleaved$ are predominant in the east of the country while the west is dominated by tree needleleave. The big cities of New York, Los angeles and other large cities are easily identifiable by their predominance of urban space.
+```{r,include=FALSE}
+addSmallLegend <- function(myPlot, pointSize = 3, textSize = 5, spaceLegend = 0.1) {
+    myPlot +
+        guides(shape = guide_legend(override.aes = list(size = pointSize)),
+               color = guide_legend(override.aes = list(size = pointSize))) +
+        theme(legend.title = element_text(size = textSize), 
+              legend.text  = element_text(size = textSize),
+              legend.key.size = unit(spaceLegend, "lines"))
+}
+
+```
 
 
 
-```{r,fig.width=7, fig.height=7,echo=FALSE}
+```{r,echo=FALSE}
 Year <- 2000
     
     p <- data_all %>% 
-      mutate(`Major land cover`=factor(max.col(data_all %>% select(starts_with("lc"))), labels = names[1:18 %in% max.col(data_all  %>% select(starts_with("lc")))])) %>% 
+      mutate(`Major land cover`=factor(max.col(data_all %>% select(starts_with("lc"))) ))%>% 
       filter(year==Year) %>% ggplot(aes(x=lon, y=lat, colour = `Major land cover`)) +
       geom_point(shape=15, size=2.4) +
       theme_minimal() + 
       ggtitle(paste('Major land cover in cells in '),Year) + 
      # scale_color_manual(values = c("wheat","wheat3", "tan2","khaki4","springgreen3", "darkgreen", "seagreen4","seagreen3","lawngreen","greenyellow", "darkolivegreen","seagreen2", "yellowgreen", "yellow4", "chartreuse3", "sandybrown", "black", "steelblue1"))
     scale_color_manual(values = c("wheat","wheat3", "tan2","khaki4","springgreen3", "darkgreen", "seagreen4","seagreen3","lawngreen","greenyellow", "darkolivegreen","red", "yellowgreen", "yellow4", "chartreuse3", "sandybrown", "black", "steelblue1"))
-    options(repr.plot.width=15, repr.plot.height=5)
-    p
+    options(repr.plot.width=30, repr.plot.height=5)
+    # Apply on original plot
+   p
+
 ```
 
-```{r,fig.width=7, fig.height=7, include= FALSE}
+```{r, include= FALSE}
 names<-1:18
 df_major<-data93[ , which(names(data93) %in% c("lat","lon"))]
 for( y in 1993:2015){
@@ -518,10 +568,10 @@ number_shifts<-1:5
 
 To access the intarctive part, click [this link](https://zinebag.shinyapps.io/AppShift/). In this app you will able to select the year and the predominant land cover will display directly on the us map. 
 
-We can also compare the occurence of fires in a location with its predominant land cover. 
+The occurence of fires in a location with its predominant land cover can also be an interesting analysis. 
 
 
-```{r,fig.width=7, fig.height=7, echo=FALSE}
+```{r, echo=FALSE}
 
 data2000<-filter_year(data,2000)
 
@@ -550,12 +600,12 @@ p <- (data2000 %>%
 
 p
 ```
-In Figure (), we notive that the highest occurency for fires happen in Florida and Georgia in the South East, in New Jersey in the East coast and all along the West coast. These areas are characterised by the predominance of $bradleaved evergreen closed to open$ trees. 
+In Figure (), the highest occurency for fires happen in Florida and Georgia in the South East, in New Jersey in the East coast and all along the West coast. These areas are characterised by the predominance of $bradleaved evergreen closed to open$ trees. 
 This observation can be explained by the effect of climbing fire -- the easy inflammable land covers e.g. $grassland and shrubs$ act as a ladder to higher land cover with higher fuel capacity as trees. 
 Usually, 'the forests are more prone to the fire only when there is a particularly low near-surface SM (soil moisture), most likely from moderate to extensive drought' (@schaefer2019land).
 
 
-Also, we can observe that the closeness of urban land cover is correlated with occurrence of wildfires (For instance near New York city and Los Angeles), meaning that the human activity can be the trigger of wildfires. Other commonly known trigger of wildfires is the presence of dry thunderstorms with high activity of cloud-to-ground flashes. This mentioned trigger is usually the cause of the higher frequency of big wildfires in the Pacific Coast.
+Also, it can be observed that the closeness of urban land cover is correlated with occurrence of wildfires (For instance near New York city and Los Angeles), meaning that the human activity can be the trigger of wildfires. Other commonly known trigger of wildfires is the presence of dry thunderstorms with high activity of cloud-to-ground flashes. This mentioned trigger is usually the cause of the higher frequency of big wildfires in the Pacific Coast.
 
 
 The combination of $grassland$ with $needle-leaved trees$ might be dangerous as can be visible on the Fig() and Fig().
@@ -563,7 +613,7 @@ The combination of $grassland$ with $needle-leaved trees$ might be dangerous as 
 
 The presence of $needle-leaved trees$ for wildfires is crucial, since the trees are closer to each-other and the dead branches on the floor with sap provide enough fuel to higher spread of wildfire. Moreover, the land cover of $deciduous trees$ can be especially dangerous in the early spring. The article by Barros et al. (@barros2014wildfire) studying the fire selectivity in Portugal suggests that the selectivity for wildfire counts is higher for $shrublands, grasslands and conifers$, but lower for agricultural areas such as $cropland$. This suggestion seems to be confirmed in the US by the early observations of the Figures () and ().
 
-```{r,fig.width=7, fig.height=7, echo=FALSE}
+```{r, echo=FALSE}
 
 
 
@@ -581,7 +631,7 @@ p
 ```
 
 
-To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant landcover at least once. Indeed in Figure (), we see that the shift values start at 1. We also see that the shifts do not exceed 5, knowing that this measurement is taken over 22 years, this is still relatively low. Note that we will not further research on the reason behind these changes during this project.
+To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant landcover at least once. Indeed in Figure (), the shift values start at 1 and they also do not exceed 5. Considering that this measurement is taken over 22 years, this is still relatively low. Note that we will not further research on the reason behind these changes during this project.
 
 ### Land covers and meteorogical correlation
 
