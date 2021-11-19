@@ -84,18 +84,18 @@ Their denominations as given in the original dataset are as follows:
   * $lc16$: urban
   * $lc17$: bare areas
   * $lc18$: water
-* $altiMean$, $altiSD$: altitude-related variables given as mean and standard devation in the grid cell 
+* $altiMean$, $altiSD$: altitude-related variables given as mean and standard deviation in the grid cell 
 * $clim1$ to $clim10$: monthly means of 10 meteorological variables in the grid cell. They present as follows:
   * 10m U-component of wind (the wind speed in Eastern direction) (m/s)
   * 10m V-component of wind (the wind speed in Northern direction) (m/s)
-  * $Dewpoint temperature$ (temperature at 2m from ground to which air must be cooled to become       saturated with water vapor, such that condensation ensues) (Kelvin)
-  * $Temperature$ (at 2m from ground) (Kelvin)
-  * $Potential evaporation$ (the amount of evaporation of water that would take place if a sufficient source of water were available) (m)
-  * $Surface net solar radiation$ (net flux of shortwave radiation; mostly radiation coming from the sun) (J/m<sup>2</sup>)
-  * $Surface net thermal radiation$ (net flux of longwave radiation; mostly radiation emitted by the surface) (J/m<sup>2</sup>)
-  * $Surface pressure$ (Pa)
-  * $Evaporation$ (of water) (m)
-  * $Precipitation$ (m)
+  * Dewpoint temperature (temperature at 2m from ground to which air must be cooled to become saturated with water vapor, such that condensation ensues) (Kelvin)
+  * Temperature (at 2m from ground) (Kelvin)
+  * Potential evaporation (the amount of evaporation of water that would take place if a sufficient source of water were available) (m)
+  * Surface net solar radiation (net flux of shortwave radiation; mostly radiation coming from the sun) (J/m<sup>2</sup>)
+  * Surface net thermal radiation (net flux of longwave radiation; mostly radiation emitted by the surface) (J/m<sup>2</sup>)
+  * Surface pressure (Pa)
+  * Evaporation (of water) (m)
+  * Precipitation (m)
   
 Please note that the area proportions $lc1$ to $lc18$ do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. 
 
@@ -121,8 +121,7 @@ library(quantreg)
 library(latex2exp)
 library(cowplot)
 library(reshape2)
-library(xtable)
-library(kableExtra)
+library(stargazer)
 library(knitr)
 ````
 
@@ -145,15 +144,17 @@ data<-data_withNA %>% drop_na()
 
 When considering only rows without missing values, 452930 rows remain. 
 
-```{r,echo=FALSE}
-summaru_cnt_ba<-xtable(summary(data[1:2]))
-kable(summaru_cnt_ba)
+```{r, results='asis', echo=FALSE}
+
+stargazer(data[1:2], type = "html", 
+          summary.stat = c("min", "p25", "median", "p75", "mean", "max"))
+
 ```
 
 
 As shown in the summary, wildfires remain relatively rare events with more than 75% of locations have less than 2 fires per month considering the feature $CNT$. Same applies for the feature $BA$ representing aggregated burnt area, where the distribution is strongly positively skewed. 
 
-As stated in the data description, the propotions of the 18 landcovers don't always add up to one. Looking at Figure() and at the summary below, we can see that the minimum value for the sum is 0.82. It is also seen from the 1st Quantile value that only 25% of the data has a sum below approx 0.99. We therefore continue with the data considering it is close enough.  
+As stated in the data description, the proportions of the 18 land covers don't always add up to one. Looking at figure \@ref(fig:sum) and at the summary below, we can see that the minimum value for the sum is 0.82. It is also seen from the 1st Quantile value that only 25% of the data has a sum below approx 0.99. We therefore continue with the data considering it is close enough.  
 
 ```{r,include=FALSE}
 lc_sum<-rowSums(data_withNA[,8:25])
@@ -179,23 +180,23 @@ X & Min.   :  0.8222     \\
 \end{table}
 ```
 
-```{r,echo=FALSE}
+```{r sum, fig.cap="PRECISE DESCRIPTION OF THE FIGURE", echo=FALSE}
 histogram(lc_sum, main="Sum of propotion of the land covers for each location",xlab='sum')
 ```
 
-```{r,fig.width=7, fig.height=7,echo=FALSE}
+```{r boxplot, fig.cap="PRECISE DESCRIPTION OF THE FIGURE", fig.width=7, fig.height=7, echo=FALSE}
 stacked_df1 <- stack(data[,8:25])
 # Boxplot from the R trees dataset
 colnames(stacked_df1)<-c("distribution", "landcover")
 boxplot(stacked_df1$distribution ~ stacked_df1$landcover, main="Distribution of land covers",lwd = 0.4,alpha = 0.3, xlab="percentages", ylab="land covers",outline=FALSE)
 #horizontal = TRUE, 
 ```
-In Figure() is displayed the distribution of land covers using Boxplot. We can see that most of the land cover represent less than 10% of the the area considered. Meaning that the areas considered are very diverse. 
+In figure \@ref(fig:boxplot) is displayed the distribution of land covers using Boxplot. We can see that most of the land cover represent less than 10% of the the area considered. Meaning that the areas considered are very diverse. 
 
 
 Some transformations on the features were made: first the temperature was converted from Kelvin to Celsius. Next, the U-component of wind (the wind speed in Eastern direction) 
 and V-component of wind (the wind speed in Northern direction)  were aggregated using the euclidian norm of the vector:
-$$Wspeed_{new}=\sqrt{Wspeed_{East}^2 + Wspeed_{West}^2 }$$
+$$W\hspace{-2pt}speed=\sqrt{{W\hspace{-2pt}speed_{East}}^2 + {W\hspace{-2pt}speed_{North}}^2 }$$
 with Wspeed the wind speed.
 
 ## Visualisation and interactive / animated maps
@@ -204,7 +205,7 @@ Before exploring the different factors, we first plotted on the map the number o
 
 The given dataset had a list of different coordinates in the United States. To determine which coordinates belong to which state, we used the python library $\it{reverse\_geocoder}$. This library gives the closest address given the coordinates, so we took the name of the state out of it and added up the numbers and stored in a dictionary for each state. 
 
-To visualize the data well, we had to make several adjustments. First, we divided the number of incidences and the burnt area by the total area of the states to make a comparison. Then we multiplied the value by 10⁶ so that we get the number of wildfires/burnt area of the state per 10⁶km². Also, we realized that the obtained numbers could go from the order of $10^{-2}$ to $10^{3}$, so we took the log of them to have a reasonable color scale for each state. The final numbers for the plots are calculated in the following way :
+To visualize the data well, we had to make several adjustments. First, we divided the number of incidences and the burnt area by the total area of the states to make a comparison. Then we multiplied the value by 10⁶ so that we get the number of wildfires/burnt area of the state per 10⁶km². Also, we realized that the obtained numbers could go from the order of $10^{-2}$ to $10^{3}$, so we took the log of them to have a reasonable color scale for each state. The final numbers for the plots are calculated in the following way:
 
 $$Final\_CNT_i=log_2\left(\frac{(\sum_{k=0}^{total\_number\_of\_coordinates\_in\_i}CNT_k)*10^6}{total\_area\_of\_i}+1\right)\; for\;i=\{list\;of\;US\;states\}$$
 $$Final\_BA_i=log_2\left(\frac{(\sum_{k=0}^{total\_number\_of\_coordinates\_in\_i}BA_k)*10^6}{total\_area\_of\_i}+1\right)\; for\;i=\{list\;of\;US\;states\}$$
@@ -218,11 +219,13 @@ $$Local\_CNT_k=4log_2\left(CNT_k+1\right)\; for\;k=\{list\;of\;coordinates\}$$
 
 $$Local\_BA_k=2log_2\left(BA_k+1\right)\; for\;k=\{list\;of\;coordinates\}$$
 
-One main aspect that we can observe is that the number of incidences does not always match with the burnt area. For instance, on May 1993, Texas had about $10^3$ acres burnt per 10⁶km², but as shown on the Figure() , the number of incidences was not as huge compared to the burnt area seeing the number and the size of red dots in Texas. 
+One main aspect that we can observe is that the number of incidences does not always match with the burnt area. For instance, on May 1993, Texas had about $10^3$ acres burnt per 10⁶km², but as shown on the figure \@ref(fig:interactive), the number of incidences was not as huge compared to the burnt area seeing the number and the size of red dots in Texas. 
 
-![Plot in 05/1993](1.png)
+```{r interactive, fig.cap="Plot in 05/1993 / PRECISE DESCRIPTION OF THE FIGURE", echo=FALSE}
 
-Figure()
+include_graphics("1.png")
+
+```
 
 ## Wildfires over time
 
@@ -234,14 +237,14 @@ data_withNA = data_train_DF
 data<-data_withNA %>% drop_na()
 ```
 
-```{r,fig.width=7, fig.height=7,echo=FALSE}
+```{r corr1,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",fig.width=7, fig.height=7,echo=FALSE}
 columns_correlation<-c(1,8:25)
 corrplot(cor(data[,columns_correlation]), method = "color", addCoef.col="black", tl.cex = 0.8, cl.cex = 0.8,
                number.cex = 0.7, number.digits = 2)
 
 ```
 
-The next step is to determine if there is a significant correlation between the different land covers and the appearance of fires. In order to do so, we use a database filtered of missing data. As can be seen in Figure (?), the correlation between the fire and the land cover remains very low. Considering that a correlation is strong when its absolute value exceeds 0.8, there is no strong correlation between the features nor between the features and the apparition of the fires. 
+The next step is to determine if there is a significant correlation between the different land covers and the appearance of fires. In order to do so, we use a database filtered of missing data. As can be seen in figure \@ref(fig:corr1), the correlation between the fire and the land cover remains very low. Considering that a correlation is strong when its absolute value exceeds 0.8, there is no strong correlation between the features nor between the features and the apparition of the fires. 
 
  
 We can nonetheless note that, besides being small, the correlation between the apparation of fires  and  cropland rainfed herbaceous cover, mosaic cropland, shrubland, grassland, bare areas and water is negative, while the correlation with mosaic natural vegetation, tree broadleaved evergreen closed to open, tree broadleaved deciduous closed to open, tree needleleave evergreen closed to open, tree needleleaved deciduous closed to open, tree mixed, mosaic tree and shrub, sparse vegetation, tree cover flooded fresh or brakish water, shrub or herbaceous cover flooded and urban areas is positive. 
@@ -287,7 +290,7 @@ ggplot(plotDat,aes(X1,X2, fill = c( "lightblue","red")[ value + 1 ])) +
 
 
 This section will address the distribution of land covers over time. To do so, the geographical coordinates of Malibu, California has been selected. This area has been heavily impacted by wildfires in recent years. 'In November 2018, the wealthy coastal enclave of Malibu was engulfed by the Woolsey Fire, which spread to over 96,000 acres of land outside of LA and is now 35% contained. At least two people were pronounced dead in Malibu on Friday' (@Malibu). 
-In Figure (), we can see the exact location of the studied point on the map of the United States.
+In figure \@ref(fig:loc), we can see the exact location of the studied point on the map of the United States.
 
 
 ```{r, include=FALSE}
@@ -335,7 +338,7 @@ lc_from_place<-function(df, lon_,lat_, lc_)
 
 ```
  
-```{r,echo=FALSE}
+```{r loc,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",echo=FALSE}
 
         distLat <- 34.3
         distLon <--118.3
@@ -363,10 +366,10 @@ lc_from_place<-function(df, lon_,lat_, lc_)
 ```
 
 
-In Figure (), we can see the distribution of the land covers with time. We can see that the proportions are relatively stable and consistent with time. The predominant cover is the $urban area$ with 31% of the surface in 1993 this proportion only increases with time. 
+In figure \@ref(fig:dist), we can see the distribution of the land covers with time. We can see that the proportions are relatively stable and consistent with time. The predominant cover is the $urban area$ with 31% of the surface in 1993 this proportion only increases with time. 
 
 
-```{r,echo=FALSE}
+```{r dist,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",echo=FALSE}
         df <- NULL
         max<-0
         indice<-0
@@ -386,10 +389,10 @@ In Figure (), we can see the distribution of the land covers with time. We can s
 ```
 
 
-Although in this particular example of Malibu, the proportion of different land covers seems consistent, this is not always the case. Taking the coordinates in Figure () in Wisconsin,  it can seen that the proportions change drastically depending on the year. The percentage of land representing $tree broadleaved evergreen closed to open$ increases with time until it becomes the predominant one, while $shrub or herbaceous cover flooded$ decreases drastically with time as seen in Figure(). We will not analyze the reasons and parameters that may have motivated this change, but will try to quantify this change in the next section. 
+Although in this particular example of Malibu, the proportion of different land covers seems consistent, this is not always the case. Taking the coordinates in figure \@ref(fig:wisc) in Wisconsin,  it can seen that the proportions change drastically depending on the year. The percentage of land representing $tree broadleaved evergreen closed to open$ increases with time until it becomes the predominant one, while $shrub or herbaceous cover flooded$ decreases drastically with time as seen in figure \@ref(fig:dist2). We will not analyze the reasons and parameters that may have motivated this change, but will try to quantify this change in the next section. 
 
 
-```{r,echo=FALSE}
+```{r wisc,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",echo=FALSE}
 
         distLat <- 44.8
         distLon <--88.8
@@ -416,7 +419,7 @@ Although in this particular example of Malibu, the proportion of different land 
         
 ```
 
-```{r,fig.width=7, fig.height=7,echo=FALSE}
+```{r dist2,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",fig.width=7, fig.height=7,echo=FALSE}
         df <- NULL
         max<-0
         indice<-0
@@ -499,7 +502,7 @@ names = c('cropland rainfed',
 
 
 
-Here will be represented the territory according to the predominant type of coverage. Figure () shows this arrangement in 2000; $water$ dominates the maritime borders, $tree broadleaved$ are predominant in the east of the country while the west is dominated by tree needleleave. The big cities of New York, Los angeles and other large cities are easily identifiable by their predominance of urban space.
+Here will be represented the territory according to the predominant type of coverage. figure () shows this arrangement in 2000; $water$ dominates the maritime borders, $tree broadleaved$ are predominant in the east of the country while the west is dominated by tree needleleave. The big cities of New York, Los angeles and other large cities are easily identifiable by their predominance of urban space.
 ```{r,include=FALSE}
 addSmallLegend <- function(myPlot, pointSize = 3, textSize = 5, spaceLegend = 0.1) {
     myPlot +
@@ -600,7 +603,7 @@ p <- (data2000 %>%
 
 p
 ```
-In Figure (), the highest occurency for fires happen in Florida and Georgia in the South East, in New Jersey in the East coast and all along the West coast. These areas are characterised by the predominance of $bradleaved evergreen closed to open$ trees. 
+In figure (), the highest occurency for fires happen in Florida and Georgia in the South East, in New Jersey in the East coast and all along the West coast. These areas are characterised by the predominance of $bradleaved evergreen closed to open$ trees. 
 This observation can be explained by the effect of climbing fire -- the easy inflammable land covers e.g. $grassland and shrubs$ act as a ladder to higher land cover with higher fuel capacity as trees. 
 Usually, 'the forests are more prone to the fire only when there is a particularly low near-surface SM (soil moisture), most likely from moderate to extensive drought' (@schaefer2019land).
 
@@ -611,7 +614,7 @@ Also, it can be observed that the closeness of urban land cover is correlated wi
 The combination of $grassland$ with $needle-leaved trees$ might be dangerous as can be visible on the Fig() and Fig().
 
 
-The presence of $needle-leaved trees$ for wildfires is crucial, since the trees are closer to each-other and the dead branches on the floor with sap provide enough fuel to higher spread of wildfire. Moreover, the land cover of $deciduous trees$ can be especially dangerous in the early spring. The article by Barros et al. (@barros2014wildfire) studying the fire selectivity in Portugal suggests that the selectivity for wildfire counts is higher for $shrublands, grasslands and conifers$, but lower for agricultural areas such as $cropland$. This suggestion seems to be confirmed in the US by the early observations of the Figures () and ().
+The presence of $needle-leaved trees$ for wildfires is crucial, since the trees are closer to each-other and the dead branches on the floor with sap provide enough fuel to higher spread of wildfire. Moreover, the land cover of $deciduous trees$ can be especially dangerous in the early spring. The article by Barros et al. (@barros2014wildfire) studying the fire selectivity in Portugal suggests that the selectivity for wildfire counts is higher for $shrublands, grasslands and conifers$, but lower for agricultural areas such as $cropland$. This suggestion seems to be confirmed in the US by the early observations of the figures () and ().
 
 ```{r, echo=FALSE}
 
@@ -631,7 +634,7 @@ p
 ```
 
 
-To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant landcover at least once. Indeed in Figure (), the shift values start at 1 and they also do not exceed 5. Considering that this measurement is taken over 22 years, this is still relatively low. Note that we will not further research on the reason behind these changes during this project.
+To analyze the variation, we create a vector whose values start at zero for any given location and increases by one as soon as the predominant coverage area changes from one month  to the next. What is first interesting to note is that all locations change their predominant land cover at least once. Indeed in figure (), the shift values start at 1 and they also do not exceed 5. Considering that this measurement is taken over 22 years, this is still relatively low. Note that we will not further research on the reason behind these changes during this project.
 
 ### Land covers and meteorogical correlation
 
@@ -916,9 +919,9 @@ range(selection$year)
 
 ````
 
-As a result, a correlation heatmap will allow us to distinguish certain factors that could favor a wildfire. 
+As a result, a correlation heatmap will allow us to distinguish certain factors that could favor a wildfire (figure \@ref(fig:corrmet)). 
 
-````{r, fig.width=7, fig.height=7, echo=FALSE}
+````{r corrmet, fig.cap="Correlation heatmap after subsetting (explained above) with meteorological variables.", fig.width=7, fig.height=7, echo=FALSE}
 
 # Correlations
 sel = cor(selection)
@@ -940,9 +943,9 @@ Another variable that we can comment on is precipitation. For an area to be burn
 
 But we should be careful with these correlations as we used a subset and as their values are not that high in absolute value. 
 
-Next, a map of the US represents the areas considered in the subset, regardless of months and years.
+Next, a map of the US represents the areas considered in the subset, regardless of months and years (figure \@ref(fig:areas)).
 
-````{r, echo=FALSE}
+````{r areas, fig.cap="US map representing the areas considered in the subset (explained above), regardless of months and years. This means that if a particular area appears at least at one time in the subset, it will be shown by a red square on the map.", echo=FALSE}
 
 # Finding considered areas
 loc = unique( selection[, c("lon", "lat", "area")] )
@@ -1006,7 +1009,7 @@ plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),main='Y = Bu
 ```
 
 
-Whereas the association between temperature and wildfire outcomes (i.e. number of wildfires and burnt area) is not very strong in the marginal analyses conducted earlier (unconditional on $\tau$), we observe a very clear association within strata given by percentiles of number of wildfires or burnt area. This indicates that temperature has a heterogeneous effect on wildfires: it is evident that temperature exacerbates the probability of wildfires in areas that are prone to these.  As a control, we have repeated the analysis with the exposure $X$ being the proportion $W$ of landcover constituted by water below:
+Whereas the association between temperature and wildfire outcomes (i.e. number of wildfires and burnt area) is not very strong in the marginal analyses conducted earlier (unconditional on $\tau$), we observe a very clear association within strata given by percentiles of number of wildfires or burnt area. This indicates that temperature has a heterogeneous effect on wildfires: it is evident that temperature exacerbates the probability of wildfires in areas that are prone to these.  As a control, we have repeated the analysis with the exposure $X$ being the proportion $W$ of land cover constituted by water below:
 
 
 ```{r echo=FALSE}
@@ -1019,7 +1022,7 @@ sample<-data[sample(1:nrow(data[data$year==2015,]),10000),]
 fm <- rq(CNT ~ lc18, data = sample, tau =  0.6+ 1:39/100)
 ## visualizations
 # plot(fm)
-plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),ylab = TeX('$b_0(\\tau$)'), cex = 1, pch = 19, main='Y = Number of wildfires, X = water proportion in landcover')
+plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),ylab = TeX('$b_0(\\tau$)'), cex = 1, pch = 19, main='Y = Number of wildfires, X = water proportion in land cover')
 
 # Burnt area
 # plot(sample$lc18,sample$BA)
@@ -1027,14 +1030,14 @@ plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),ylab = TeX('
 # Quantile regression
 fm <- rq(BA ~ lc18, data = sample, tau =   0.6+ 1:39/100)
 # plot(fm)
-plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),ylab = TeX('$b_0(\\tau$)'), cex = 1, pch = 19,main='Y = Burnt area , X = water proportion in landcover')
+plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),ylab = TeX('$b_0(\\tau$)'), cex = 1, pch = 19,main='Y = Burnt area , X = water proportion in land cover')
 
 
 
 ```
 
 
-The negative control shows what we expect: areas which are susceptible to wildfires experience substantially less of these the larger the proportion of landcover that is constituted by water. These illustrations highlight the power of quantile regression in elucidating heterogenous covariate effects across units.
+The negative control shows what we expect: areas which are susceptible to wildfires experience substantially less of these the larger the proportion of land cover that is constituted by water. These illustrations highlight the power of quantile regression in elucidating heterogenous covariate effects across units.
 
 
 The strong association between temperature and wildfires for large quantiles for wildfire outcomes prompots us to consider how the yearly mean temperature has evolved with time, as this may tell us about the risk of wildfires in the future if temperatures continue to rise. In the plot below, we observe a weakly rising trend (we have chosen vertical axis limits to start above zero to highlight variations in temperature). We therefore remark that we may experience an exacerbation of wildfires in the future, if temperatures continue to rise.
@@ -1049,11 +1052,11 @@ plot(unique(data$year),mean.temp, 'l', xlab='Year',ylab='Yearly mean temperature
 
 ## Conclusion
 
-In this investigation, we have studied two sets of risk factors for wildfires: (1) the type of landcover and (2) local meteorological conditions. In our exploration of landcover, we found that the proportion of urban areas has been increasing from 1993-2005. Fires are often caused by urban activity, so this trend could lead to more wildfires in the future. In our meteorological exploration, we found that the cause-effect relation of meteorological variables on wildfires may be highly multifactorial. The correlations between the number of fires and meterological varibles were small marginally in the population. To disentangle the effect of meterological variables from the effect of landcover on fires, we examined the joint distribution of these variables. We found that the correlation between meteorological variables and landcover types were weaker than expected, which makes it more feasible to interpret these variables as independent causes of wildfires.
+In this investigation, we have studied two sets of risk factors for wildfires: (1) the type of land cover and (2) local meteorological conditions. In our exploration of land cover, we found that the proportion of urban areas has been increasing from 1993-2005. Fires are often caused by urban activity, so this trend could lead to more wildfires in the future. In our meteorological exploration, we found that the cause-effect relation of meteorological variables on wildfires may be highly multifactorial. The correlations between the number of fires and meterological varibles were small marginally in the population. To disentangle the effect of meterological variables from the effect of land cover on fires, we examined the joint distribution of these variables. We found that the correlation between meteorological variables and land cover types were weaker than expected, which makes it more feasible to interpret these variables as independent causes of wildfires.
 
 Most of our analysis has targeted marginal associations between risk factors and the number of wildfires or aggregate burnt area (i.e. unconditional on subsets of geographical gridpoints). These correlations were often weak, but grew stronger in subsets of the population with a greater number of wildfires. This motivated us to characterize the heterogeneity in risk of wildfires by conducting subgroup analyses. To do so, we performed quantile regression, which revealed that temperature substantially exacerbated the risk of wildfires in areas which are prone to wildfires. This is in spite of the fact that temperature was only weakly associated with wildfires marginally.
 
-Furthermore, we have seen a weakly rising trend in the temperature over the past years. Coupled with our observation fact that the proportion of urban landcover has been rising steadily with time, and that human activity is an important cause of wildfires, we note that we may see an increased occurrence of wildfires in the years to come.
+Furthermore, we have seen a weakly rising trend in the temperature over the past years. Coupled with our observation fact that the proportion of urban land cover has been rising steadily with time, and that human activity is an important cause of wildfires, we note that we may see an increased occurrence of wildfires in the years to come.
 
 
 ## Future improvements
@@ -1061,6 +1064,8 @@ Furthermore, we have seen a weakly rising trend in the temperature over the past
 An extension to our analysis would be to use our data to do some predictions. So it would also be advantageous to find a more recent dataset, since ours is limited to 2015. As a consequence, we could perceive a more important effect of global warming, and previous correlations might appear more distinctly.
 
 Another improvement would be to look at other regions that are subject to wildfires, such as Australia or African countries. This would increase our dataset and help us capture the main factors and causes by comparing the areas (more heterogeneity in our data).
+
+Finally, our data may contain fires that are of criminal origin. In this analysis, we have assumed that the causes are of natural origin. An improvement would be to take this into account and possibly identify those cases which do not interest us in this context. 
 
 <div id="refs"></div>
 
