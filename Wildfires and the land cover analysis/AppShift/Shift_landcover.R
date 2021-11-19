@@ -104,7 +104,7 @@ ui <- fluidPage(
     
     # Show a plot of the generated distribution
     mainPanel(
-      tabPanel("Landcover Distribution", plotOutput("distPlot"))
+      tabPanel("Landcover Distribution", br(), plotOutput("distPlot"))
     
     
     )))

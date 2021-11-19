@@ -127,7 +127,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(tabsetPanel(
             tabPanel("US Map", br(), plotOutput("usMap")),
-            tabPanel("Landcover Distribution", plotOutput("distPlot"))
+            tabPanel("Landcover Distribution", br(), plotOutput("distPlot"))
             
         )
     
@@ -151,8 +151,8 @@ server <- function(input, output) {
             df <- rbind(df,temp_df)} }
         if(!is.null(df)){
             p<-ggplot(df,aes(x=x,y=y,group=col,colour=factor(col))) + geom_line()+guides(colour=guide_legend(ncol=2))
-            p+ ggtitle("Distribution of landcover across time") +
-                xlab("Years") + ylab("Percentages of landcovers")
+            p+ ggtitle("Distribution of land covers across time") +
+                xlab("Years") + ylab("Percentages of land covers")
         }
         
         
