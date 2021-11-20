@@ -124,6 +124,7 @@ library(cowplot)
 library(reshape2)
 library(stargazer)
 library(knitr)
+library(stargazer)
 ````
 
 ```{r,include=FALSE}
@@ -731,7 +732,7 @@ FindCorForLC <- function (x,methode,threshold){
     c = cor(X,Y,method=methode)
     if (c > threshold | c < -threshold){
       correlations = c(correlations, y)
-      print (c("cor(",x, ",",y,")=" ,c))
+      print (paste("cor(",x,",",y,")=",c))
     }
   }
   return(correlations)
@@ -806,7 +807,7 @@ dataMod$ShrubArea = ShrubArea
  
 dataMod <-dataMod %>% relocate(Rainfed,Trees,vegetation,ShrubArea)
 corrplot(cor(dataMod, method = "spearman"), method = "color", addCoef.col="black",tl.cex = 0.7, cl.cex = 0.7,
-               number.cex = 0.35, number.digits = 2)
+               number.cex = 0.8, number.digits = 2)
 ```
 
 
@@ -903,7 +904,8 @@ In this section, we try to model the fact that there was a fire in a grid for a 
 
 
 ```{r, echo = FALSE}
-summary(m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18, data = df))
+m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18, data = df)
+summary(m1)
 ```
 
 
