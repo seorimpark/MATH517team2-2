@@ -52,8 +52,9 @@ An investigation will be conducted and consists in answering these subquestions 
 ### Approaches
 To answer the above questions we will proceed as follows. 
 A descriptive and visual approach where interactive plots will be produced  with information on different dimensions: geographically, temporally and by different factors. 
-Afterwards,the distribution of land covers will be studied. Also, the analysis of the variation of land covers in the same location will be carried because of the changes that have been noticed in some areas. 
-We will then proceed with the analysis of the number of fires. To do so,the analysis of the land covers and meteorological parameters will be conducted. After noticing that the correlation between parameters was low, so we used subsets and performed a quantile regression. 
+Afterwards, the distribution of land covers will be studied. Also, the analysis of the variation of land covers in the same location will be carried because of the changes that have been noticed in some areas. 
+We will then proceed with the analysis of the number of fires. To do so, the analysis of the land covers and meteorological parameters will be conducted. 
+After noticing that the correlation between parameters was low, we used subsets and performed a quantile regression. 
 
 ## Sources of information / datasets
 To perform this analysis, a dataset for the United States from 1993 to 2015 will be used. It contains 563,983 rows with 37 columns. The columns are the following:
@@ -101,7 +102,7 @@ Their denominations as given in the original dataset are as follows:
 Please note that the area proportions $lc1$ to $lc18$ do not always sum to exactly 1 for each pixel and month since a few classes with quasi-0 proportion have been removed. 
 
 
-Since the original data was given under the context of a [prediction competition with the University of Edimburgh](https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge), there is a 8,000 of missing values in each of the CNT and BA columns. The missing values are not located necessarily in the same lines for the two features. 
+Since the original data was given under the context of a [prediction competition with the University of Edimburgh](https://www.maths.ed.ac.uk/school-of-mathematics/eva-2021/competitions/data-challenge), there is a 8,000 of missing values in each of the $CNT$ and $BA$ columns. The missing values are not located necessarily in the same lines for the two features. 
 
 ````{r, include=FALSE}
 
@@ -144,25 +145,21 @@ data_withNA = data_train_DF
 data<-data_withNA %>% drop_na()
 ```
 
-When considering only rows without missing values, 452930 rows remain. 
+When considering only rows without missing values, 452'930 rows remain. 
 
 ```{r, results='asis', echo=FALSE}
-
-stargazer(data[1:2], type = "html", 
-          summary.stat = c("min", "p25", "median", "p75", "mean", "max"))
-
-```
-
-
-As shown in the summary, wildfires remain relatively rare events with more than 75% of locations have less than 2 fires per month considering the feature $CNT$. Same applies for the feature $BA$ representing aggregated burnt area, where the distribution is strongly positively skewed. 
-
-As stated in the data description, the proportions of the 18 land covers don't always add up to one. Looking at Figure \@ref(fig:sum) and at the summary below, we can see that the minimum value for the sum is 0.82. It is also seen from the 1st Quantile value that only 25% of the data has a sum below approx 0.99. We therefore continue with the data considering it is close enough.  
-
-```{r,include=FALSE}
-lc_sum<-rowSums(data_withNA[,8:25])
-summary(lc_sum)
+sum_of_lcs<-rowSums(data[,8:25])
+data_to_summarise<-cbind(data[1:2],sum_of_lcs)
+stargazer(data_to_summarise, type = "html", 
+          summary.stat = c("min", "p25", "median", "p75", "mean", "max"),title="Table (1): Summary of feature CNT, BA and the sum of lcs by row")
 
 ```
+
+
+As shown in the Table (1), wildfires remain relatively rare events. More than 75% of the locations considered have less than two fires per month when looking at the feature $CNT$. Same applies for the feature $BA$ representing aggregated burnt area, where the distribution is strongly positively skewed. 
+
+As stated in the data description, the proportions of the 18 land covers don't always add up to one. Looking at Figure \@ref(fig:sum) and in Table (1), we can see that the minimum value for the sum is 0.82. It is also seen from the 1st Quantile value that only 25% of the data has a sum below approx 0.99. We therefore continue with the data considering it is close enough.  
+
 
 ```{=latex}
 \begin{table}[ht]
@@ -193,7 +190,9 @@ colnames(stacked_df1)<-c("distribution", "landcover")
 boxplot(stacked_df1$distribution ~ stacked_df1$landcover, main="",lwd = 0.4,alpha = 0.3, xlab="percentages", ylab="land covers",outline=FALSE)
 #horizontal = TRUE, 
 ```
-In Figure \@ref(fig:boxplot) is displayed the distribution of land covers using Boxplot. We can see that most of the land cover represent less than 10% of the the area considered. Meaning that the areas considered are very diverse. 
+
+In Figure \@ref(fig:boxplot) is displayed the distribution of land covers using Boxplot.
+We can see that most of the land cover represent less than 10% of the the location considered, this shows that the area considered are diverse.
 
 
 Some transformations on the features were made: first the temperature was converted from Kelvin to Celsius. Next, the U-component of wind (the wind speed in Eastern direction) 
@@ -203,20 +202,19 @@ with Wspeed the wind speed.
 
 ## Visualisation and wildfires over time
 
-Before exploring the different factors, we first plotted on the map the number of cases of wildfires (denoted as $CNT$) as well as the burnt area (denoted as $BA$) from it with respect to time to do a descriptive analysis of the data. We want to determine which States are the most affected by wildfires, and identify when they happen the most. 
+In order to do a descriptive analysis of the data and before exploring the different factors, we first plot on the map the number of cases of wildfires (denoted as $CNT$ ) as well as the burnt area (denoted as $BA$ ) from it with respect to time. This was made with the objective of determining which states are the most affected by wildfires and identifying the time when the fires happen the most. 
 
-The given dataset had a list of different coordinates in the United States. To determine which coordinates belong to which state, we used the python library $\it{reverse\_geocoder}$ ([link](https://github.com/thampiman/reverse-geocoder)). This library gives the closest address given the coordinates, so we took the name of the state out of it and added up the numbers and stored in a dictionary for each state. We can denote $CNT_i$ or $BA_i$ the values of the dictionary for i a state in the U.S.. Let us also denote $CNT_k$ or $BA_k$ the value for k a given coordinate.
+The given dataset had a list of different coordinates in the United States. To determine which coordinates belong to which state, the python library $\it{reverse\_geocoder}$  ([link](https://github.com/thampiman/reverse-geocoder)) was used. This library gives the closest address given the coordinates. With this, we proceed by extracting the name of the state, added up the numbers and stored in a dictionary for each state. $CNT_i$ or $BA_i$ stand for the values of the dictionary for i a state in the U.S.A . Let us also denote $CNT_k$ or $BA_k$ the value for k a given coordinate.
 
-To visualize the data well, we had to make several adjustments. First, we divided the number of incidences and the burnt area by the total area of the states to make a comparison. Then we multiplied the value by $10^5$ (for $CNT$) or $10^4$ (for $BA$) so that we get the number of wildfires/burnt area of the state per $10^4km^2$ or $10^5km^2$ respectively. Also, we realized that the obtained numbers could go from the order of $10^{-2}$ to $10^{3}$, so we took the log of them to have a reasonable color scale for each state. The final numbers for the plots are calculated as follows:
+To better visualize the data, several adjustments have been made. First, the number of incidences and the burnt area were divided by the total area of the states to make a comparison. Then this value was multiplied by $10^5$ (for $CNT$) or $10^4$ (for $BA$) in order to get the number of wildfires/burnt area of the state per $10^4km^2$ or $10^5km^2$ respectively. Also, we realized that the obtained numbers could go from the order of $10^{-2}$ to $10^{3}$. In order to have a reasonable color scale for each state, the log scale was applied. The final numbers for the plots are calculated as follows:
 
 $$Final\_CNT_i=log_2\left(\frac{10^5\left(\sum\limits_{k=coordinate\_0}^{total\_number\_of\_coordinates\_in\_i}CNT_k\right)}{total\_area\_of\_i}+1\right)$$
 $$Final\_BA_i=log_2\left(\frac{10^4\left(\sum\limits_{k=coordinate\_0}^{total\_number\_of\_coordinates\_in\_i}BA_k\right)}{total\_area\_of\_i}+1\right)$$
-for i a state in the U.S..
+for i a state in the U.S.A .
 
-The numbers close to 0 are trivial, so we added 1 before taking the log to not have meaningless outliers with the scale starting with big negative numbers.
+The numbers close to 0 are trivial, hence 1 is added before taking the log to avoid having meaningless outliers with the scale starting with big negative numbers.
 
-
-In addition, we plotted the number of incidences/burnt area for each location in red scatter points with a size scale. To adjust the numbers, we used the log scale again. The numbers were obtained as follows:
+In addition, we plotted the number of incidences/burnt area for each location in red scatter points with a size scale. To adjust the numbers, the log scale was again applied. The numbers were obtained as follows:
 
 $$Local\_CNT_k=4log_2\left(CNT_k+1\right)$$
 
@@ -224,7 +222,7 @@ $$Local\_BA_k=2log_2\left(BA_k+1\right)$$
  
 for k a given coordinate of the dataset.
 
-Several interactive maps in python with the chosen scaling methods was made, but due to technical issues (@1), deploying the maps with an external link was not possible. However, running the interactive maps on the file $\it Visualisation\_general.ipynb$ and $\it Visualisation\_specific.ipynb$ on local servers is still possible, provided that the needed libraries are installed. Figures \@ref(fig:overview), \@ref(fig:CNTm), \@ref(fig:BAm), \@ref(fig:CNTy), \@ref(fig:BAy) are animated plots of the interactive map with respect to different time frame, and the mode ($CNT$ or $BA$)
+Several interactive maps in python with the chosen scaling methods was made, but due to technical issues (@1), deploying the maps with an external link was not possible. However, running the interactive maps on the file $\it Visualisation\_general.ipynb$  and $\it Visualisation\_specific.ipynb$  on local servers is still possible, provided that the needed libraries are installed. Figures \@ref(fig:overview), \@ref(fig:CNTm), \@ref(fig:BAm), \@ref(fig:CNTy), \@ref(fig:BAy) are animated plots of the interactive map with respect to different time frame, and the mode ($CNT$ or $BA$ )
 
 Figure \@ref(fig:overview) is an overview of one option that can be chosen for the plot. The color scale shows the burnt area for each states, and the circle scatter plot shows the number of incidences for each coordinates. 
 
@@ -234,7 +232,7 @@ include_graphics("1.gif")
 
 ```
 
-One observable aspect from the plot is that the number of incidences does not always match with the burnt area. For instance, on June 1993, Texas (The state at the very bottom in the middle on the map) had about $10^3$ acres burnt per $10^4km^2$, but as shown on the Figure \@ref(fig:interactive), the number of incidences was not as huge compared to the burnt area seeing the number and the size of red dots in Texas. 
+One observable aspect from these plots is that the number of incidences does not always match with the burnt area. For instance, on June 1993, Texas (The state at the very bottom in the middle on the map) had about $10^3$ acres burnt per $10^4km^2$, but as shown on the Figure \@ref(fig:interactive), the number of incidences was not as huge compared to the burnt area seeing the number and the size of red dots in Texas. 
 
 ```{r interactive, fig.cap="Plot in 06/1993, BA in colors and CNT in scatter circles", echo=FALSE, out.width="150%"}
 
@@ -243,7 +241,7 @@ include_graphics("1.png")
 ```
 
 
-Figure \@ref(fig:CNTm) is the mean out of number of cases of all the years at a specific month. One noticeable aspect is that the states at the edge of the country are most likely to have a high number of incidences. We have a phenomenon similar to the "eye of the storm" at the center, and moving around. At the beginning of the spring season, states at the east side are affected the most : but as the time goes by, the "eye of the storm" moves to the east, and finishes by having states at the west being the most affected.
+Figure \@ref(fig:CNTm) displays the mean out of number of cases of all the years at a specific month. One noticeable aspect is that the states at the edge of the country are most likely to have a high number of incidences. We have a phenomenon similar to the "eye of the storm" at the center, and moving around. At the beginning of the spring season, states at the east side are affected the most : but as the time goes by, the "eye of the storm" moves to the east, and finishes by having states at the west being the most affected.
 
 ```{r CNTm, fig.cap="Animated map of mean of number of wildfires from 1993 to 2015 at each month", echo=FALSE}
 
@@ -251,7 +249,7 @@ include_graphics("2.gif")
 
 ```
 
-Figure \@ref(fig:BAm) is the mean out of burnt area of all the years at a specific month. Compared to Figure \@ref(fig:CNTm), we can recover more or less the same phenomenon with the change being more dramatic. For example, the numbers at Nevada grows from about $6.88$ acres per $10^4km^2$ in March to $5.80.10^3$ acres per $10^4km^2$ in August, compared to the number of cases that grows from $3.02$ to $67.62$ at the same period.  By the end of summer, the impact of wildfires are huge at the west side of the country. In August, almost half of the land has more than $2^8$ acres burnt per $10^4km^2$.
+Figure \@ref(fig:BAm) is the mean out of burnt area of all the years at a specific month. Compared to Figure \@ref(fig:CNTm), we can recover more or less the same phenomenon with the change being more dramatic. For example, the numbers at Nevada grows from about $6.88$ acres per $10^4km^2$ in March to $5.80.10^3$ acres per $10^4km^2$ in August, compared to the number of cases that grows from $3.02$ to $67.62$  at the same period.  By the end of summer, the impact of wildfires are huge at the west side of the country. In August, almost half of the land has more than $2^8$ acres burnt per $10^4km^2$.
 
 ```{r BAm, fig.cap="Animated map of mean of burnt area from 1993 to 2015 at each month", echo=FALSE}
 
@@ -275,7 +273,7 @@ include_graphics("5.gif")
 
 ```
 
-We can recover the observation of Figure \@ref(fig:BAy), by plotting the total burnt area $\left(\sum\limits_{i=state\_0}^{all\;the\;states}BA_i\right)$ with respect to the year. Figure \@ref(fig:BAtot) shows the evolution of the total burnt area in the U.S. from 1993 to 2015. We can observe that the numbers are indeed periodic. In addition, the graph is slightly increasing considering the plot of the rolling mean of window 4, which implies that the incidences are becoming more and more severe by average. Figure \@ref(fig:CNTtot) shows the evolution of total number of wildfires $\left(\sum\limits_{i=state\_0}^{all\;the\;states}CNT_i\right)$. Observing the rolling mean of the same condition as the total burnt area, the numbers seem to oscillate but do not have a particular increasing or decreasing trend over time. 
+We can recover the observation of Figure \@ref(fig:BAy), by plotting the total burnt area ($\sum\limits_{i=state\_0}^{all\;the\;states}BA_i$)  with respect to the year. Figure \@ref(fig:BAtot) shows the evolution of the total burnt area in the U.S. from 1993 to 2015. We can observe that the numbers are indeed periodic. In addition, the graph is slightly increasing considering the plot of the rolling mean of window 4, which implies that the incidences are becoming more and more severe by average. Figure \@ref(fig:CNTtot) shows the evolution of total number of wildfires ($\sum\limits_{i=state\_0}^{all\;the\;states}CNT_i$). Observing the rolling mean of the same condition as the total burnt area, the numbers seem to oscillate but do not have a particular increasing or decreasing trend over time. 
 
 ```{r BAtot, fig.cap="Total burnt area with respect to time", echo=FALSE, out.width="250%"}
 
