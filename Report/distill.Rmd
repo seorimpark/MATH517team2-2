@@ -36,23 +36,24 @@ In order to reduce the number and the severity of wildfires, understanding the m
 In addition, those factors change as the time goes by, and they generate a better or worse conditions for wildfires to happen. For instance, global warming is highly suspected to be one of the main reasons why the wildfires were more recurrent in the recent days (@globalWarming). Countries have been undergoing climate changes, and those unexpected events can be the seed of the recent disasters.
 
 ### Research questions
-In this investigation, we set out to answer the following questions: 
+The purpose of this investigation is to give an answer to the following question : 
 
+What are the main factors that affect the propagation of wildfires within the United States ?
+
+An investigation will be conducted and consists in answering these subquestions :
 
 1. How have the number of fires in the United States of America evolved with time from 1993 to 2015?
 
 2. How do the land covers vary over time? 
 
-3. What are the main factors that cause wildfires ? 
-
-4. How are fires distributed across the land covers and meteorological factors?
+3. How are fires distributed across the land covers and meteorological factors?
 
 
 ### Approaches
 To answer the above questions we will proceed as follows. 
-A descriptive and visual approach where we will produce interactive plots with information on different dimensions: geographically, temporally and by different factors. 
-Afterwards, we will look at the distribution of land covers. We will also analyse the variation of land covers in the same location since we noticed it changed in some areas. 
-We will then proceed with the analysis of the number of fires. To do so, we will look at the land covers and meteorological parameters. We noticed that the correlation between parameters was low, so we used subsets and performed a quantile regression. 
+A descriptive and visual approach where interactive plots will be produced  with information on different dimensions: geographically, temporally and by different factors. 
+Afterwards,the distribution of land covers will be studied. Also, the analysis of the variation of land covers in the same location will be carried because of the changes that have been noticed in some areas. 
+We will then proceed with the analysis of the number of fires. To do so,the analysis of the land covers and meteorological parameters will be conducted. After noticing that the correlation between parameters was low, so we used subsets and performed a quantile regression. 
 
 ## Sources of information / datasets
 To perform this analysis, a dataset for the United States from 1993 to 2015 will be used. It contains 563,983 rows with 37 columns. The columns are the following:
@@ -756,7 +757,7 @@ corr18 =FindCorForLC(18,"pearson",0.6)
 ```
 
 
-Here, we choose a threshold of 0.6 and none of the correlations has been displayed except one. This means that those who haven't been printed are less that 0.6. We get that the correlation between the shrublands and the surface net thermal radiation is of -0.72. This seems normal: the more radiation is issued by the surface, the less shrub we get. But the results are not as good as expected. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the dependence is not linear here. So we are going to compute the correlation with spearman method to see if the relation between the variables is monotonic. 
+Here, we choose a threshold of 0.6 and none of the correlations has been displayed except one. This means that those who haven't been printed are less that 0.6. We get that the correlation between the shrublands and the surface net thermal radiation is of -0.72. This seems normal: the more radiation is issued by the surface, the less shrub we get. But the results are not as good as expected. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the dependence is not linear here. The first option seems less likely. So we are going to compute the correlation with spearman method to see if the relation between the variables is monotonic. 
 
 
 ```{r, echo = FALSE}
@@ -781,10 +782,10 @@ corr18 = FindCorForLC(18,"spearman",0.6)
 ```
 
 
-Now by changing the method, we observe that we get that the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated, same result as earlier. And, we also get that the water, urban and surface pressure are correlated. The pressure in the water is higher that the atmospheric pressure and increases with the depth. The pollution of the air explains the positive correlation between urban lands and surface pressure. To visualize our results and try to show more, we are going to regroup our data so that we can compute a correlation matrix. We take variables of land covers that are similar and have a common characteristic and sum them together. 
+Now by changing the method, we observe that we get that the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated, same result as earlier. And, we also get that the water, urban and surface pressure are correlated. The pressure in the water is higher that the atmospheric pressure and increases with the depth. The pollution of the air explains the positive correlation between urban lands and surface pressure. To visualize our results and try to show more, we are going to regroup our data so that we can compute a correlation matrix with again spearman method.This part consists of taking variables of land covers that are similar with common characteristics ans sum them together.
 
 
-```{r, echo =FALSE}
+```{r, fig.cap="Correlation heatmap after regrouping the land covers with meteorological variables.",fig.width=7, fig.height=7, echo =FALSE}
 dataMod = data
 Rainfed = dataMod$CR+ dataMod$CRherb
 dataMod$Rainfed = Rainfed
@@ -809,10 +810,10 @@ corrplot(cor(dataMod, method = "spearman"), method = "color", addCoef.col="black
 ```
 
 
-This technique has been useful to represent our previous result. Also we get that Evaporation is negatively correlated with the trees, meaning the more trees there are, less evaporation there is. For the next project, one can think of trying to find correlation between other land cover and meteorological data by plotting the scatter plot to find a curve that approximate the data.
+This technique has been useful to represent our previous result. Also in the figure, Evaporation is negatively correlated with the trees, meaning the more trees there are, less evaporation there is. For the next project, one can think of trying to find correlation between other land cover and meteorological data by plotting the scatter plot to find a curve that approximate the data to look for non monotonic or non linear correlation.
 
 ### Spreading fire based on the type of land cover
-First, to analyze the spread of a fire, we are going to look for the distribution of the number of fires in a grid during a month.
+First, to analyze the spread of a fire, let's look for the distribution of the number of fires in a grid during a month. 
 
 
 
@@ -821,7 +822,7 @@ hist <- hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1), main=" Number of fires i
 ```
 
 
-We remark that most of the values are close to 0 and because of the outliers we can't see the distribution very good. So we are going to filter the outliers to have a better view of the distrubution 
+We remark that most of the values are close to 0 and because of the outliers we can't see the distribution very good. So we filter the outliers to have a better view of the distrubution 
 
 
 ```{r, echo = FALSE}
@@ -830,7 +831,7 @@ hist = hist(df1$CNT, breaks = seq(-0.5, max(df1$CNT)+0.5, 1), main= "Number of f
 ``` 
 
 
-Now, since we want to predict the spread of a fire given the land covers data, let's plot the distribution of the number of fire according to each land cover variable. 
+Now, since the aim of this part is to predict the spread of a fire given the land covers data, let's plot the distribution of the number of fire according to each land cover variable. 
 
 ```{r, echo = FALSE}
 sample <- df [sample(1:nrow(df),10000),]
@@ -888,14 +889,15 @@ plot17 <-ggplot ()+
 #18
 plot18 <-ggplot ()+
   geom_point(data = sample, aes(x = lc18, y= CNT))
-cowplot::plot_grid(plot1, plot2, plot3, plot4,plot5, plot6, plot7,plot8,plot9, labels = "AUTO")
+cowplot::plot_grid(plot1, plot2, plot3, plot4,plot5, plot6, plot7,plot8,plot9)
 ```
 
 
 ```{r, echo = FALSE}
-cowplot::plot_grid(plot10,plot11,plot12,plot13,plot14,plot15,plot16,plot17,plot18, labels = "AUTO")
+cowplot::plot_grid(plot10,plot11,plot12,plot13,plot14,plot15,plot16,plot17,plot18)
 ```
 
+Most of the plots have a distribution that can make this of Poisson distrubtion, or power laws in certain case. 
 
 In this section, we try to model the fact that there was a fire in a grid for a given month  given the land cover specification of the grid. The problem is that we have the number of fire in the grid. One can think of using the zero inflated Poisson regression. In fact, the zero inflated Poisson is used to count data with excess zeros and overdispersion, which describe well our data. It combines the Poisson distribution and the logit distribution.
 
