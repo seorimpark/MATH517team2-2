@@ -145,7 +145,7 @@ data_withNA = data_train_DF
 data<-data_withNA %>% drop_na()
 ```
 
-When considering only rows without missing values, 452'930 rows remain. 
+When considering only rows without missing values, 452,930 rows remain. 
 
 ```{r, results='asis', echo=FALSE}
 sum_of_lcs<-rowSums(data[,8:25])
@@ -1072,7 +1072,7 @@ plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),main='Y = Bu
 
 Whereas the association between temperature and wildfire outcomes (i.e. number of wildfires and burnt area) is not very strong in the marginal analyses conducted earlier (unconditional on $\tau$), we observe a very clear association within strata given by percentiles of number of wildfires or burnt area. This indicates that temperature has a heterogeneous effect on wildfires: it is evident that temperature exacerbates the probability of wildfires in areas that are prone to these.  As a control, we have repeated the analysis with the exposure $X$ being the proportion $W$ of land cover constituted by water in Figure (\@ref(fig:NW)) and Figure (\@ref(fig:BW)).
 
-```{r NW, fig.cap="Quantile regression for the effect on water landcover on number of wildfires", echo=FALSE}
+```{r NW, fig.cap="Quantile regression for the effect on water land cover on number of wildfires", echo=FALSE}
 # Quantile regression for proportion of water
 # # Scatter plot
 # plot(sample$lc18,sample$CNT)
@@ -1085,7 +1085,7 @@ fm <- rq(CNT ~ lc18, data = sample, tau =  0.6+ 1:39/100)
 plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),ylab = TeX('$b_0(\\tau$)'), cex = 1, pch = 19, main='Y = Number of wildfires, X = water proportion in land cover')
 ```
 
-```{r BW, fig.cap="Quantile regression for the effect on water landcover on burnt area", echo=FALSE}
+```{r BW, fig.cap="Quantile regression for the effect on water land cover on burnt area", echo=FALSE}
 # Burnt area
 # plot(sample$lc18,sample$BA)
 
