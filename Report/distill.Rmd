@@ -151,7 +151,7 @@ When considering only rows without missing values, 452'930 rows remain.
 sum_of_lcs<-rowSums(data[,8:25])
 data_to_summarise<-cbind(data[1:2],sum_of_lcs)
 stargazer(data_to_summarise, type = "html", 
-          summary.stat = c("min", "p25", "median", "p75", "mean", "max"),title="Table (1): Summary of feature CNT, BA and the sum of lcs by row")
+          summary.stat = c("min", "p25", "median", "p75", "mean", "max"),title="Table (1): Summary of features CNT, BA and the sum of lcs by row")
 
 ```
 
@@ -180,7 +180,7 @@ X & Min.   :  0.8222     \\
 ```
 
 ```{r sum, fig.cap="Histogram representing the sum of land covers by row from 1993 to 2015. The histogram is negatively skewed ", echo=FALSE}
-histogram(lc_sum, main="",xlab='sum')
+histogram(sum_of_lcs, main="",xlab='sum')
 ```
 
 ```{r boxplot, fig.cap="Distribution of land covers from 1993 to 2015", fig.width=7, fig.height=7, echo=FALSE}
@@ -448,7 +448,7 @@ In Figure \@ref(fig:dist), we can see the distribution of the land covers with t
 ```
 
 
-Although in this particular example of Malibu, the proportion of different land covers seems consistent, this is not always the case. Taking the coordinates in Figure \@ref(fig:wisc) in Wisconsin,  it can seen that the proportions change drastically depending on the year. The percentage of land representing $tree broadleaved evergreen closed to open$ increases with time until it becomes the predominant one, while $shrub or herbaceous cover flooded$ decreases drastically with time as seen in Figure \@ref(fig:dist2). We will not analyze the reasons and parameters that may have motivated this change, but will try to quantify this change in the next section. 
+Although in this particular example of Malibu, the proportion of different land covers seems consistent, this is not always the case. Taking the coordinates in Figure \@ref(fig:wisc) in Wisconsin,  it can seen that the proportions change drastically across the years. The percentage of land representing $tree broadleaved evergreen closed to open$ increases with time until it becomes the predominant one, while $shrub or herbaceous cover flooded$ decreases drastically with time as seen in Figure \@ref(fig:dist2). We will not analyze the reasons and parameters that may have motivated, but will try to quantify it in the next section. 
 
 
 ```{r wisc,fig.cap="Location considered in the analysis here Wisconsin",echo=FALSE}
@@ -496,10 +496,10 @@ Although in this particular example of Malibu, the proportion of different land 
 ```
 
 
-To access the interactive part, click [this link](https://zinebag.shinyapps.io/LandCovers/). In this app you will able to select the longitude and lattitude wanted and see the distribution of the land covers. 
+To access the interactive part, click [this link](https://zinebag.shinyapps.io/LandCovers/). In this app you will able to select the longitude and lattitude and see the distribution of the land covers. 
 
 
-### Predominant Land covers Analysis and Shifts:
+### Predominant Land covers Analysis and Shifts
 
 ```{r, include= FALSE}
 
@@ -561,7 +561,7 @@ names = c('cropland rainfed',
 
 
 
-Here will be represented the territory according to the predominant type of coverage. Figure () shows this arrangement in 2000; $water$ dominates the maritime borders, $tree broadleaved$ are predominant in the east of the country while the west is dominated by tree needleleave. The big cities of New York, Los angeles and other large cities are easily identifiable by their predominance of urban space.
+Here will be represented the territory according to the predominant type of coverage. Figure (\@ref(fig:predom)) shows this arrangement in 2000; $water$ dominates the maritime borders, $tree broadleaved$ are predominant in the east of the country while the west is dominated by tree needleleave. The big cities of New York, Los angeles and other large cities are easily identifiable by their predominance of urban space.
 ```{r,include=FALSE}
 addSmallLegend <- function(myPlot, pointSize = 3, textSize = 5, spaceLegend = 0.1) {
     myPlot +
@@ -781,7 +781,7 @@ corr18 = FindCorForLC(18,"spearman",0.6)
 ```
 
 
-Now by changing the method, we observe that we get that the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated, same result as earlier. And, we also get that the water, urban and surface pressure are correlated. The pressure in the water is higher that the atmospheric pressure and increases with the depth. The pollution of the air explains the positive correlation between urban lands and surface pressure. To visualize our results and try to show more, we are going to regroup our data so that we can compute a correlation matrix with again spearman method.This part consists of taking variables of land covers that are similar with common characteristics ans sum them together.
+Now by changing the method, we observe that we get that the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated, same result as earlier. And, we also get that the water, urban and surface pressure are correlated. The pressure in the water is higher that the atmospheric pressure and increases with the depth. The pollution of the air explains the positive correlation between urban lands and surface pressure. To visualize our results and try to show more, we are going to regroup our data so that we can compute a correlation matrix with again spearman method. This part consists of taking variables of land covers that are similar with common characteristics ans sum them together.
 
 
 ```{r, fig.cap="Correlation heatmap after regrouping the land covers with meteorological variables.",fig.width=7, fig.height=7, echo =FALSE}
@@ -821,7 +821,7 @@ hist <- hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1), main=" Number of fires i
 ```
 
 
-We remark that most of the values are close to 0 and because of the outliers we can't see the distribution very good. So we filter the outliers to have a better view of the distrubution 
+We remark that most of the values are close to 0 and because of the outliers we can't see the distribution very clearly. We thus filter the outliers to have a better view of the distrubution. 
 
 
 ```{r, echo = FALSE}
@@ -830,7 +830,7 @@ hist = hist(df1$CNT, breaks = seq(-0.5, max(df1$CNT)+0.5, 1), main= "Number of f
 ``` 
 
 
-Now, since the aim of this part is to predict the spread of a fire given the land covers data, let's plot the distribution of the number of fire according to each land cover variable. 
+Now, since the aim of this part is to predict the spread of a fire given the land covers data. Let's plot the distribution of the number of fire according to each land cover variable. 
 
 ```{r, echo = FALSE}
 sample <- df [sample(1:nrow(df),10000),]
@@ -896,7 +896,7 @@ cowplot::plot_grid(plot1, plot2, plot3, plot4,plot5, plot6, plot7,plot8,plot9)
 cowplot::plot_grid(plot10,plot11,plot12,plot13,plot14,plot15,plot16,plot17,plot18)
 ```
 
-Most of the plots have a distribution that can make this of Poisson distrubtion, or power laws in certain case. 
+Most of the plots have a distribution that can make this of Poisson distribution, or power laws in certain case. 
 
 In this section, we try to model the fact that there was a fire in a grid for a given month  given the land cover specification of the grid. The problem is that we have the number of fire in the grid. One can think of using the zero inflated Poisson regression. In fact, the zero inflated Poisson is used to count data with excess zeros and overdispersion, which describe well our data. It combines the Poisson distribution and the logit distribution.
 
@@ -908,7 +908,7 @@ summary(m1)
 
 
 
-Below, you can find a block of output containing Poisson regression coefficients for each of the variables along with the standard errors, z-score and p-values for the coefficients. A second block follows with the inflation model which includes logit coefficients for predicting excess zeros. All of the predictions in both the count and inflation portion are statistically significant ( all p-values are very small) except for the land cover 3 in the count model. But otherwise this means that the null hypothesis that the coefficient is equal to 0 is rejected for all the coefficients. This means that this model fits the data significantly better than the null model.
+Below, you can find a block of output containing Poisson regression coefficients for each of the variables along with the standard errors, z-score and p-values for the coefficients. A second block follows with the inflation model which includes logit coefficients for predicting excess zeros. All of the predictions in both the count and inflation portion are statistically significant ( all p-values are very small) except for the land cover 3 in the count model. But otherwise this means that the null hypothesis that the coefficient is equal to 0 is rejected for all the coefficients. Hence this model fits the data significantly better than the null model.
 
 
 ## Wildfires and meteorogical factors
@@ -1070,7 +1070,7 @@ plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),main='Y = Bu
 ```
 
 
-Whereas the association between temperature and wildfire outcomes (i.e. number of wildfires and burnt area) is not very strong in the marginal analyses conducted earlier (unconditional on $\tau$), we observe a very clear association within strata given by percentiles of number of wildfires or burnt area. This indicates that temperature has a heterogeneous effect on wildfires: it is evident that temperature exacerbates the probability of wildfires in areas that are prone to these.  As a control, we have repeated the analysis with the exposure $X$ being the proportion $W$ of land cover constituted by water in Figure \@ref(fig:NW) and Figure \@ref(fig:BW) below.
+Whereas the association between temperature and wildfire outcomes (i.e. number of wildfires and burnt area) is not very strong in the marginal analyses conducted earlier (unconditional on $\tau$), we observe a very clear association within strata given by percentiles of number of wildfires or burnt area. This indicates that temperature has a heterogeneous effect on wildfires: it is evident that temperature exacerbates the probability of wildfires in areas that are prone to these.  As a control, we have repeated the analysis with the exposure $X$ being the proportion $W$ of land cover constituted by water in Figure (\@ref(fig:NW)) and Figure (\@ref(fig:BW)).
 
 ```{r NW, fig.cap="Quantile regression for the effect on water landcover on number of wildfires", echo=FALSE}
 # Quantile regression for proportion of water
@@ -1085,7 +1085,7 @@ fm <- rq(CNT ~ lc18, data = sample, tau =  0.6+ 1:39/100)
 plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),ylab = TeX('$b_0(\\tau$)'), cex = 1, pch = 19, main='Y = Number of wildfires, X = water proportion in land cover')
 ```
 
-```{r BW, fig.cap="Quantile regression for the effect on water landcover on number of wildfires", echo=FALSE}
+```{r BW, fig.cap="Quantile regression for the effect on water landcover on burnt area", echo=FALSE}
 # Burnt area
 # plot(sample$lc18,sample$BA)
 
@@ -1102,9 +1102,9 @@ plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),ylab = TeX('
 The negative control shows what we expect: areas which are susceptible to wildfires experience substantially less of these the larger the proportion of land cover that is constituted by water. These illustrations highlight the power of quantile regression in elucidating heterogenous covariate effects across units.
 
 
-The strong association between temperature and wildfires for large quantiles for wildfire outcomes prompots us to consider how the yearly mean temperature has evolved with time, as this may tell us about the risk of wildfires in the future if temperatures continue to rise. In the plot below, we observe a weakly rising trend (we have chosen vertical axis limits to start above zero to highlight variations in temperature). We therefore remark that we may experience an exacerbation of wildfires in the future, if temperatures continue to rise.
+The strong association between temperature and wildfires for large quantiles for wildfire outcomes prompots us to consider how the yearly mean temperature has evolved with time, as this may tell us about the risk of wildfires in the future if temperatures continue to rise. In Figure (\@ref(fig:tempevol)), we observe a weakly rising trend (we have chosen vertical axis limits to start above zero to highlight variations in temperature). We therefore remark that we may experience an exacerbation of wildfires in the future, if temperatures continue to rise.
 
-```{r echo=FALSE}
+```{r tempevol, fig.cap="", echo=FALSE}
 mean.temp<-rep(0,length(unique(data$year)))
 for (i in unique(data$year)){
   mean.temp[match(i,unique(data$year))]<-mean(data$clim4[data$year==i]-273.15)
