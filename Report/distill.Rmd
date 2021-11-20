@@ -1039,13 +1039,13 @@ load("../Data/data_train_DF.RData")
 data = data_train_DF
 ```
 
-The histogram in Figure (), had a long tail, which indicates that many of the fires arise in a small subset of geographical gridpoints. In other words, there is considerable heterogeneity between the geographical gridpoints. Furthermore, in the interactive app which explored meteorological correlations, it was found that meteorological variables were more strongly correlated with the number of wildfires in subgroups of geographical gridpoints with a large number of fires.  This motivated us to conduct an explicit subgroup analysis by employing quantile regression. We employed the linear quantile regression model
+In the preceding analysis, we have seen that many of the fires arise in a small subset of geographical gridpoints. In other words, there is considerable heterogeneity between the geographical gridpoints. Furthermore, in the interactive app which explored meteorological correlations, it was found that meteorological variables were more strongly correlated with the number of wildfires in subgroups of geographical gridpoints with a large number of fires.  This motivated us to conduct an explicit subgroup analysis by employing quantile regression. We employed the linear quantile regression model
 $$ Q_Y(\tau\mid X) = a_0(\tau) + b_0(\tau)X $$
-where $Y$ is the outcome (number of wildfires ($N$) or the burnt area ($A$)),  $X$ is the exposure covariate (risk factor) and $Q_\cdot(\tau\mid X)$ is the conditional quantile corresponding to percentile $\tau$ for exposure level $X$. This model allows us to explore dynamic covariate effects of $X$ across strata of $\tau$. In Figure (), we have fit the quantile regression model with $X=$ temperature for a random sample of 10 000 geographical gridpoints from the year 2015. 
+where $Y$ is the outcome (number of wildfires ($N$) or the burnt area ($A$)),  $X$ is the exposure covariate (risk factor) and $Q_\cdot(\tau\mid X)$ is the conditional quantile corresponding to percentile $\tau$ for exposure level $X$. This model allows us to explore dynamic covariate effects of $X$ across strata of $\tau$. In Figure \@ref(fig:NT) and Figure \@ref(fig:BT), we have fit the quantile regression model with $X=$ temperature for a random sample of 10 000 geographical gridpoints from the year 2015. 
 
 
 
-```{r echo=FALSE}
+```{r NT, fig.cap="Quantile regression for the effect on temperature on number of wildfires", echo=FALSE}
 set.seed(7)
 sample<-data[sample(1:nrow(data[data$year==2015,]),10000),]
 # Number of wildfires
@@ -1058,7 +1058,9 @@ fm <- rq(CNT ~ clim4, data = sample, tau =  0.6+ 1:39/100)
 ## visualizations
 # plot(fm)
 plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),main='Y = Number of wildfires, X = Temperature', ylab = TeX('$b_0(\\tau$)'), cex = 1, pch = 19)
+```
 
+```{r BT, fig.cap="Quantile regression for the effect on temperature on burnt area", echo=FALSE}
 # Burnt area
 # plot(sample$clim4,sample$BA)
 # Quantile regression
@@ -1068,10 +1070,9 @@ plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),main='Y = Bu
 ```
 
 
-Whereas the association between temperature and wildfire outcomes (i.e. number of wildfires and burnt area) is not very strong in the marginal analyses conducted earlier (unconditional on $\tau$), we observe a very clear association within strata given by percentiles of number of wildfires or burnt area. This indicates that temperature has a heterogeneous effect on wildfires: it is evident that temperature exacerbates the probability of wildfires in areas that are prone to these.  As a control, we have repeated the analysis with the exposure $X$ being the proportion $W$ of land cover constituted by water below:
+Whereas the association between temperature and wildfire outcomes (i.e. number of wildfires and burnt area) is not very strong in the marginal analyses conducted earlier (unconditional on $\tau$), we observe a very clear association within strata given by percentiles of number of wildfires or burnt area. This indicates that temperature has a heterogeneous effect on wildfires: it is evident that temperature exacerbates the probability of wildfires in areas that are prone to these.  As a control, we have repeated the analysis with the exposure $X$ being the proportion $W$ of land cover constituted by water in Figure \@ref(fig:NW) and Figure \@ref(fig:BW) below.
 
-
-```{r echo=FALSE}
+```{r NW, fig.cap="Quantile regression for the effect on water landcover on number of wildfires", echo=FALSE}
 # Quantile regression for proportion of water
 # # Scatter plot
 # plot(sample$lc18,sample$CNT)
@@ -1082,7 +1083,9 @@ fm <- rq(CNT ~ lc18, data = sample, tau =  0.6+ 1:39/100)
 ## visualizations
 # plot(fm)
 plot(fm, parm = 2, mar = c(5.1, 4.1, 2.1, 2.1), xlab=TeX('$\\tau$'),ylab = TeX('$b_0(\\tau$)'), cex = 1, pch = 19, main='Y = Number of wildfires, X = water proportion in land cover')
+```
 
+```{r BW, fig.cap="Quantile regression for the effect on water landcover on number of wildfires", echo=FALSE}
 # Burnt area
 # plot(sample$lc18,sample$BA)
 
