@@ -259,7 +259,7 @@ include_graphics("3.gif")
 
 ```
 
-Figure \@ref(fig:CNTy) is the mean out of number of cases from March to September at a specific year. One can deduce that the evolution is heterogeneous throughout the years, but excluding year 2015, the "eye of storm" phenomenon is apparent, with Kansas and the states around it being almost untouched, and the states at the edge being more affected.
+Figure \@ref(fig:CNTy) is the mean out of number of cases from March to September at a specific year. One can deduce that the evolution is heterogeneous throughout the years, but excluding year 2015, the "eye of storm" phenomenon is apparent, with Kansas and the states around it being almost untouched, and the states at the edge being the most affected.
 
 ```{r CNTy, fig.cap="Animated map of mean of number of wildfires at each year", echo=FALSE}
 
@@ -275,7 +275,7 @@ include_graphics("5.gif")
 
 ```
 
-We can recover the observation of Figure \@ref(fig:BAy), by plotting the total burnt area $\left(\sum\limits_{i=state\_0}^{all\;the\;states}BA_i\right)$ with respect to the year. Figure \@ref(fig:BAtot) shows the the evolution of the total burnt area in the U.S. from 1993 to 2015. We can observe that the numbers are indeed periodic. In addition, the graph is slightly increasing on one hand, which implies that the incidences are becoming more and more severe by average. On the other hand, Figure \@ref(fig:CNTtot) which shows the evolution of total number of wildfires $\left(\sum\limits_{i=state\_0}^{all\;the\;states}CNT_i\right)$ seems to oscillate but do not vary much by average. 
+We can recover the observation of Figure \@ref(fig:BAy), by plotting the total burnt area $\left(\sum\limits_{i=state\_0}^{all\;the\;states}BA_i\right)$ with respect to the year. Figure \@ref(fig:BAtot) shows the evolution of the total burnt area in the U.S. from 1993 to 2015. We can observe that the numbers are indeed periodic. In addition, the graph is slightly increasing considering the plot of the rolling mean of window 4, which implies that the incidences are becoming more and more severe by average. Figure \@ref(fig:CNTtot) shows the evolution of total number of wildfires $\left(\sum\limits_{i=state\_0}^{all\;the\;states}CNT_i\right)$. Observing the rolling mean of the same condition as the total burnt area, the numbers seem to oscillate but do not have a particular increasing or decreasing trend over time. 
 
 ```{r BAtot, fig.cap="Total burnt area with respect to time", echo=FALSE, out.width="250%"}
 
