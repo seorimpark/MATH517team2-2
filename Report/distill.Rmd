@@ -1104,7 +1104,7 @@ The negative control shows what we expect: areas which are susceptible to wildfi
 
 The strong association between temperature and wildfires for large quantiles for wildfire outcomes prompots us to consider how the yearly mean temperature has evolved with time, as this may tell us about the risk of wildfires in the future if temperatures continue to rise. In Figure (\@ref(fig:tempevol)), we observe a weakly rising trend (we have chosen vertical axis limits to start above zero to highlight variations in temperature). We therefore remark that we may experience an exacerbation of wildfires in the future, if temperatures continue to rise.
 
-```{r tempevol, fig.cap="", echo=FALSE}
+```{r tempevol, fig.cap="Temporal evolution of mean temperature across time", echo=FALSE}
 mean.temp<-rep(0,length(unique(data$year)))
 for (i in unique(data$year)){
   mean.temp[match(i,unique(data$year))]<-mean(data$clim4[data$year==i]-273.15)
