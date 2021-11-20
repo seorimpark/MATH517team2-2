@@ -180,15 +180,15 @@ X & Min.   :  0.8222     \\
 \end{table}
 ```
 
-```{r sum, fig.cap="PRECISE DESCRIPTION OF THE FIGURE", echo=FALSE}
-histogram(lc_sum, main="Sum of propotion of the land covers for each location",xlab='sum')
+```{r sum, fig.cap="Histogram representing the sum of land covers by row from 1993 to 2015. The histogram is negatively skewed ", echo=FALSE}
+histogram(lc_sum, main="",xlab='sum')
 ```
 
-```{r boxplot, fig.cap="PRECISE DESCRIPTION OF THE FIGURE", fig.width=7, fig.height=7, echo=FALSE}
+```{r boxplot, fig.cap="Distribution of land covers from 1993 to 2015", fig.width=7, fig.height=7, echo=FALSE}
 stacked_df1 <- stack(data[,8:25])
 # Boxplot from the R trees dataset
 colnames(stacked_df1)<-c("distribution", "landcover")
-boxplot(stacked_df1$distribution ~ stacked_df1$landcover, main="Distribution of land covers",lwd = 0.4,alpha = 0.3, xlab="percentages", ylab="land covers",outline=FALSE)
+boxplot(stacked_df1$distribution ~ stacked_df1$landcover, main="",lwd = 0.4,alpha = 0.3, xlab="percentages", ylab="land covers",outline=FALSE)
 #horizontal = TRUE, 
 ```
 In Figure \@ref(fig:boxplot) is displayed the distribution of land covers using Boxplot. We can see that most of the land cover represent less than 10% of the the area considered. Meaning that the areas considered are very diverse. 
@@ -296,7 +296,7 @@ data_withNA = data_train_DF
 data<-data_withNA %>% drop_na()
 ```
 
-```{r corr1,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",fig.width=7, fig.height=7,echo=FALSE}
+```{r corr1,fig.cap="Correlation plot for the fires occurences and the different land covers",fig.width=7, fig.height=7,echo=FALSE}
 columns_correlation<-c(1,8:25)
 corrplot(cor(data[,columns_correlation]), method = "color", addCoef.col="black", tl.cex = 0.8, cl.cex = 0.8,
                number.cex = 0.7, number.digits = 2)
@@ -397,7 +397,7 @@ lc_from_place<-function(df, lon_,lat_, lc_)
 
 ```
  
-```{r loc,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",echo=FALSE}
+```{r loc,fig.cap="Location considered in the analysis here is Malibu, CA",echo=FALSE}
 
         distLat <- 34.3
         distLon <--118.3
@@ -418,7 +418,7 @@ lc_from_place<-function(df, lon_,lat_, lc_)
             theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
                   axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(),
                   plot.title = element_text(size=20, hjust=0.5, vjust=2)) + 
-            ggtitle('Location considered, here Malibu, CA') + 
+            ggtitle('Malibu') + 
             coord_fixed(1.3)
         
         
@@ -428,7 +428,7 @@ lc_from_place<-function(df, lon_,lat_, lc_)
 In Figure \@ref(fig:dist), we can see the distribution of the land covers with time. We can see that the proportions are relatively stable and consistent with time. The predominant cover is the $urban area$ with 31% of the surface in 1993 this proportion only increases with time. 
 
 
-```{r dist,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",echo=FALSE}
+```{r dist,fig.cap="Distribution of land covers across time from 1993 to 2015 in Malibu, CA",echo=FALSE}
         df <- NULL
         max<-0
         indice<-0
@@ -442,7 +442,7 @@ In Figure \@ref(fig:dist), we can see the distribution of the land covers with t
             df <- rbind(df,temp_df)} }
         if(!is.null(df)){
             p<-ggplot(df,aes(x=x,y=y,group=col,colour=factor(col))) + geom_line()+guides(colour=guide_legend(ncol=2))
-            p+ ggtitle("Distribution of land cover across time") +
+            p+ ggtitle("Distribution of land covers") +
          xlab("Years") + ylab("Percentages of land covers")
         }
 ```
@@ -451,7 +451,7 @@ In Figure \@ref(fig:dist), we can see the distribution of the land covers with t
 Although in this particular example of Malibu, the proportion of different land covers seems consistent, this is not always the case. Taking the coordinates in Figure \@ref(fig:wisc) in Wisconsin,  it can seen that the proportions change drastically depending on the year. The percentage of land representing $tree broadleaved evergreen closed to open$ increases with time until it becomes the predominant one, while $shrub or herbaceous cover flooded$ decreases drastically with time as seen in Figure \@ref(fig:dist2). We will not analyze the reasons and parameters that may have motivated this change, but will try to quantify this change in the next section. 
 
 
-```{r wisc,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",echo=FALSE}
+```{r wisc,fig.cap="Location considered in the analysis here Wisconsin",echo=FALSE}
 
         distLat <- 44.8
         distLon <--88.8
@@ -472,13 +472,13 @@ Although in this particular example of Malibu, the proportion of different land 
             theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(),
                   axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(),
                   plot.title = element_text(size=20, hjust=0.5, vjust=2)) + 
-            ggtitle('Location considered, here Wisconsin') + 
+            ggtitle('Wisconsin') + 
             coord_fixed(1.3)
         
         
 ```
 
-```{r dist2,fig.cap="PRECISE DESCRIPTION OF THE FIGURE",fig.width=7, fig.height=7,echo=FALSE}
+```{r dist2,fig.cap="Distribution of land cover across time in Wisconsin",fig.width=7, fig.height=7,echo=FALSE}
         df <- NULL
         max<-0
         indice<-0
@@ -490,7 +490,7 @@ Although in this particular example of Malibu, the proportion of different land 
             df <- rbind(df,temp_df)} }
         if(!is.null(df)){
             p<-ggplot(df,aes(x=x,y=y,group=col,colour=factor(col))) + geom_line()+guides(colour=guide_legend(ncol=2))
-            p+ ggtitle("Distribution of land cover across time") +
+            p+ ggtitle("Distribution of land cover") +
          xlab("Years") + ylab("Percentages of land covers")
         }
 ```
@@ -633,7 +633,7 @@ To access the intarctive part, click [this link](https://zinebag.shinyapps.io/Ap
 The occurence of fires in a location with its predominant land cover can also be an interesting analysis. 
 
 
-```{r fire2000,fig.cap="Fires in the United States of America in 2000 by location", echo=FALSE}
+```{r fire2000,fig.cap="Mean number of fires in the United States of America in 2000 by location", echo=FALSE}
 
 data2000<-filter_year(data,2000)
 
@@ -675,7 +675,7 @@ The combination of $grassland$ with $needle-leaved trees$ might be dangerous as 
 
 The presence of $needle-leaved trees$ for wildfires is crucial, since the trees are closer to each-other and the dead branches on the floor with sap provide enough fuel to higher spread of wildfire. Moreover, the land cover of $deciduous trees$ can be especially dangerous in the early spring. The article by Barros et al. (@barros2014wildfire) studying the fire selectivity in Portugal suggests that the selectivity for wildfire counts is higher for $shrublands, grasslands and conifers$, but lower for agricultural areas such as $cropland$. This suggestion seems to be confirmed in the US by the early observations of the Figures () and ().
 
-```{r shift,fig.cap="Number of shifts of predominant land cover in 2000 by location", echo=FALSE}
+```{r shift,fig.cap="Number of shifts of predominant land cover by location", echo=FALSE}
 
 p <- df_shifts %>% 
   #mutate(`Major land cover`=factor(max.col(data_all %>% select(starts_with("lc"))), labels = names[1:18 %in% max.col(data_all  %>% select(starts_with("lc")))])) %>% 
