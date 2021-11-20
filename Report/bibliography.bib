@@ -67,6 +67,12 @@
   url = {https://www.nationalgeographic.com/science/article/climate-change-increases-risk-fires-western-us}
 }
 
+@Manual{1,
+  title={The given dataset was too huge to be imported in python, since it is a compressed Rdata file, which exceeds 300 MB when converted to a CSV file meaning similar or bigger in size when imported to python. To deploy python applications, one can use Heroku, but the maximum given memory for computation is 512 MB, which is too small with respect to this dataset. One can try to minimize the use of memory, but it would be almost impossible since at least two times the size of the dataset would be needed as free memory in order to make different plots (as importing the file is needed first, and breaking it down to several Dataframe objects would take at least as many memory as the size of the whole dataset). Another approach would be to use R instead and deploy the application on shinyapps.io, because Rdata is believed to be computation-wise and memory-wise more efficient to be handled with R.},
+  author={{ref}},
+  year={1}
+}
+
 @Manual{schaefer2019land,
   title = {Land-Cover Dependent Relationships between Fire and Soil Moisture},
   author = {{Schaefer, Alexander J. and Magi, Brian I.}},

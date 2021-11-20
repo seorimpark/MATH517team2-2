@@ -199,35 +199,94 @@ and V-component of wind (the wind speed in Northern direction)  were aggregated 
 $$W\hspace{-2pt}speed=\sqrt{{W\hspace{-2pt}speed_{East}}^2 + {W\hspace{-2pt}speed_{North}}^2 }$$
 with Wspeed the wind speed.
 
-## Visualisation and interactive / animated maps
+## Visualisation and wildfires over time
 
-Before exploring the different factors, we first plotted on the map the number of cases of wildfires (denoted as CNT) as well as the burnt area (denoted as BA) from it with respect to time to do a descriptive analysis of the data. We want to determine which States are the most affected by wildfires, and identify when they happen the most. 
+Before exploring the different factors, we first plotted on the map the number of cases of wildfires (denoted as $CNT$) as well as the burnt area (denoted as $BA$) from it with respect to time to do a descriptive analysis of the data. We want to determine which States are the most affected by wildfires, and identify when they happen the most. 
 
-The given dataset had a list of different coordinates in the United States. To determine which coordinates belong to which state, we used the python library $\it{reverse\_geocoder}$. This library gives the closest address given the coordinates, so we took the name of the state out of it and added up the numbers and stored in a dictionary for each state. 
+The given dataset had a list of different coordinates in the United States. To determine which coordinates belong to which state, we used the python library $\it{reverse\_geocoder}$ ([link](https://github.com/thampiman/reverse-geocoder)). This library gives the closest address given the coordinates, so we took the name of the state out of it and added up the numbers and stored in a dictionary for each state. We can denote $CNT_i$ or $BA_i$ the values of the dictionary for i a state in the U.S.. Let us also denote $CNT_k$ or $BA_k$ the value for k a given coordinate.
 
-To visualize the data well, we had to make several adjustments. First, we divided the number of incidences and the burnt area by the total area of the states to make a comparison. Then we multiplied the value by 10⁶ so that we get the number of wildfires/burnt area of the state per 10⁶km². Also, we realized that the obtained numbers could go from the order of $10^{-2}$ to $10^{3}$, so we took the log of them to have a reasonable color scale for each state. The final numbers for the plots are calculated in the following way:
+To visualize the data well, we had to make several adjustments. First, we divided the number of incidences and the burnt area by the total area of the states to make a comparison. Then we multiplied the value by $10^5$ (for $CNT$) or $10^4$ (for $BA$) so that we get the number of wildfires/burnt area of the state per $10^4km^2$ or $10^5km^2$ respectively. Also, we realized that the obtained numbers could go from the order of $10^{-2}$ to $10^{3}$, so we took the log of them to have a reasonable color scale for each state. The final numbers for the plots are calculated as follows:
 
-$$Final\_CNT_i=log_2\left(\frac{(\sum_{k=0}^{total\_number\_of\_coordinates\_in\_i}CNT_k)*10^6}{total\_area\_of\_i}+1\right)\; for\;i=\{list\;of\;US\;states\}$$
-$$Final\_BA_i=log_2\left(\frac{(\sum_{k=0}^{total\_number\_of\_coordinates\_in\_i}BA_k)*10^6}{total\_area\_of\_i}+1\right)\; for\;i=\{list\;of\;US\;states\}$$
+$$Final\_CNT_i=log_2\left(\frac{10^5\left(\sum\limits_{k=coordinate\_0}^{total\_number\_of\_coordinates\_in\_i}CNT_k\right)}{total\_area\_of\_i}+1\right)$$
+$$Final\_BA_i=log_2\left(\frac{10^4\left(\sum\limits_{k=coordinate\_0}^{total\_number\_of\_coordinates\_in\_i}BA_k\right)}{total\_area\_of\_i}+1\right)$$
+for i a state in the U.S..
 
 The numbers close to 0 are trivial, so we added 1 before taking the log to not have meaningless outliers with the scale starting with big negative numbers.
 
 
 In addition, we plotted the number of incidences/burnt area for each location in red scatter points with a size scale. To adjust the numbers, we used the log scale again. The numbers were obtained as follows:
 
-$$Local\_CNT_k=4log_2\left(CNT_k+1\right)\; for\;k=\{list\;of\;coordinates\}$$
+$$Local\_CNT_k=4log_2\left(CNT_k+1\right)$$
 
-$$Local\_BA_k=2log_2\left(BA_k+1\right)\; for\;k=\{list\;of\;coordinates\}$$
+$$Local\_BA_k=2log_2\left(BA_k+1\right)$$
+ 
+for k a given coordinate of the dataset.
 
-One main aspect that we can observe is that the number of incidences does not always match with the burnt area. For instance, on May 1993, Texas had about $10^3$ acres burnt per 10⁶km², but as shown on the figure \@ref(fig:interactive), the number of incidences was not as huge compared to the burnt area seeing the number and the size of red dots in Texas. 
+Several interactive maps in python with the chosen scaling methods was made, but due to technical issues (@1), deploying the maps with an external link was not possible. However, running the interactive maps on the file $\it Visualisation\_general.ipynb$ and $\it Visualisation\_specific.ipynb$ on local servers is still possible, provided that the needed libraries are installed. Figures \@ref(fig:overview), \@ref(fig:CNTm), \@ref(fig:BAm), \@ref(fig:CNTy), \@ref(fig:BAy) are animated plots of the interactive map with respect to different time frame, and the mode ($CNT$ or $BA$)
 
-```{r interactive, fig.cap="Plot in 05/1993 / PRECISE DESCRIPTION OF THE FIGURE", echo=FALSE}
+Figure \@ref(fig:overview) is an overview of one option that can be chosen for the plot. The color scale shows the burnt area for each states, and the circle scatter plot shows the number of incidences for each coordinates. 
+
+```{r overview, fig.cap="Overview of the interactive map, BA in colors and CNT in scatter circles", echo=FALSE}
+
+include_graphics("1.gif")
+
+```
+
+One observable aspect from the plot is that the number of incidences does not always match with the burnt area. For instance, on June 1993, Texas (The state at the very bottom in the middle on the map) had about $10^3$ acres burnt per $10^4km^2$, but as shown on the Figure \@ref(fig:interactive), the number of incidences was not as huge compared to the burnt area seeing the number and the size of red dots in Texas. 
+
+```{r interactive, fig.cap="Plot in 06/1993, BA in colors and CNT in scatter circles", echo=FALSE, out.width="150%"}
 
 include_graphics("1.png")
 
 ```
 
-## Wildfires over time
+
+Figure \@ref(fig:CNTm) is the mean out of number of cases of all the years at a specific month. One noticeable aspect is that the states at the edge of the country are most likely to have a high number of incidences. We have a phenomenon similar to the "eye of the storm" at the center, and moving around. At the beginning of the spring season, states at the east side are affected the most : but as the time goes by, the "eye of the storm" moves to the east, and finishes by having states at the west being the most affected.
+
+```{r CNTm, fig.cap="Animated map of mean of number of wildfires from 1993 to 2015 at each month", echo=FALSE}
+
+include_graphics("2.gif")
+
+```
+
+Figure \@ref(fig:BAm) is the mean out of burnt area of all the years at a specific month. Compared to Figure \@ref(fig:CNTm), we can recover more or less the same phenomenon with the change being more dramatic. For example, the numbers at Nevada grows from about $6.88$ acres per $10^4km^2$ in March to $5.80.10^3$ acres per $10^4km^2$ in August, compared to the number of cases that grows from $3.02$ to $67.62$ at the same period.  By the end of summer, the impact of wildfires are huge at the west side of the country. In August, almost half of the land has more than $2^8$ acres burnt per $10^4km^2$.
+
+```{r BAm, fig.cap="Animated map of mean of burnt area from 1993 to 2015 at each month", echo=FALSE}
+
+include_graphics("3.gif")
+
+```
+
+Figure \@ref(fig:CNTy) is the mean out of number of cases from March to September at a specific year. One can deduce that the evolution is heterogeneous throughout the years, but excluding year 2015, the "eye of storm" phenomenon is apparent, with Kansas and the states around it being almost untouched, and the states at the edge being more affected.
+
+```{r CNTy, fig.cap="Animated map of mean of number of wildfires at each year", echo=FALSE}
+
+include_graphics("4.gif")
+
+```
+
+Figure \@ref(fig:BAy) is the mean out of burnt area from March to September at a specific year. First we can recover more or less the same result as the one from Figure \@ref(fig:CNTy), except the fact that the eye moved from Kansas to Illinois. It seems like the severity of wildfires is almost periodic : at year 1997, 2004, 2010, the cases are less severe, but in 2000, 2007, 2012, the cases are way more severe. 
+
+```{r BAy, fig.cap="Animated map of mean of burnt area at each year", echo=FALSE}
+
+include_graphics("5.gif")
+
+```
+
+We can recover the observation of Figure \@ref(fig:BAy), by plotting the total burnt area $\left(\sum\limits_{i=state\_0}^{all\;the\;states}BA_i\right)$ with respect to the year. Figure \@ref(fig:BAtot) shows the the evolution of the total burnt area in the U.S. from 1993 to 2015. We can observe that the numbers are indeed periodic. In addition, the graph is slightly increasing on one hand, which implies that the incidences are becoming more and more severe by average. On the other hand, Figure \@ref(fig:CNTtot) which shows the evolution of total number of wildfires $\left(\sum\limits_{i=state\_0}^{all\;the\;states}CNT_i\right)$ seems to oscillate but do not vary much by average. 
+
+```{r BAtot, fig.cap="Total burnt area with respect to time", echo=FALSE, out.width="250%"}
+
+include_graphics("2.png")
+
+```
+
+```{r CNTtot, fig.cap="Total number of wildfires with respect to time", echo=FALSE, out.width="250%"}
+
+include_graphics("3.png")
+
+```
+
 
 ## Wildfires and the land cover:
 ### Correlation between Land covers and Wildfires:
@@ -1052,7 +1111,7 @@ plot(unique(data$year),mean.temp, 'l', xlab='Year',ylab='Yearly mean temperature
 
 ## Conclusion
 
-In this investigation, we have studied two sets of risk factors for wildfires: (1) the type of land cover and (2) local meteorological conditions. In our exploration of land cover, we found that the proportion of urban areas has been increasing from 1993-2005. Fires are often caused by urban activity, so this trend could lead to more wildfires in the future. In our meteorological exploration, we found that the cause-effect relation of meteorological variables on wildfires may be highly multifactorial. The correlations between the number of fires and meterological varibles were small marginally in the population. To disentangle the effect of meterological variables from the effect of land cover on fires, we examined the joint distribution of these variables. We found that the correlation between meteorological variables and land cover types were weaker than expected, which makes it more feasible to interpret these variables as independent causes of wildfires.
+In this investigation, we have studied three sets of risk factors for wildfires: (1) the time period (2) the type of land cover and (3) local meteorological conditions. The interactive map as a function of time let us analyse the influence of the time period within a year and throughout the years. Although the map looked very heterogeneous, some particular trends have been observed for a specific time period in a year. Also, the global trend for burnt area was periodic, and slightly increasing throughout the years whereas the number of wildfires did not. In our exploration of land cover, we found that the proportion of urban areas has been increasing from 1993-2005. Fires are often caused by urban activity, so this trend could lead to more wildfires in the future. In our meteorological exploration, we found that the cause-effect relation of meteorological variables on wildfires may be highly multifactorial. The correlations between the number of fires and meterological varibles were small marginally in the population. To disentangle the effect of meterological variables from the effect of land cover on fires, we examined the joint distribution of these variables. We found that the correlation between meteorological variables and land cover types were weaker than expected, which makes it more feasible to interpret these variables as independent causes of wildfires.
 
 Most of our analysis has targeted marginal associations between risk factors and the number of wildfires or aggregate burnt area (i.e. unconditional on subsets of geographical gridpoints). These correlations were often weak, but grew stronger in subsets of the population with a greater number of wildfires. This motivated us to characterize the heterogeneity in risk of wildfires by conducting subgroup analyses. To do so, we performed quantile regression, which revealed that temperature substantially exacerbated the risk of wildfires in areas which are prone to wildfires. This is in spite of the fact that temperature was only weakly associated with wildfires marginally.
 
