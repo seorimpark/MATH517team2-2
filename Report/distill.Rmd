@@ -36,11 +36,11 @@ In order to reduce the number and the severity of wildfires, understanding the m
 In addition, those factors change as the time goes by, and they generate a better or worse conditions for wildfires to happen. For instance, global warming is highly suspected to be one of the main reasons why the wildfires were more recurrent in the recent days (@globalWarming). Countries have been undergoing climate changes, and those unexpected events can be the seed of the recent disasters.
 
 ### Research questions
-The purpose of this investigation is to give an answer to the following question : 
+The purpose of this investigation is to give an answer to the following question: 
 
-What are the main factors that affect the propagation of wildfires within the United States ?
+What are the main factors that affect the propagation of wildfires within the United States?
 
-An investigation will be conducted and consists in answering these subquestions :
+An investigation will be conducted and consists in answering these subquestions:
 
 1. How have the number of fires in the United States of America evolved with time from 1993 to 2015?
 
@@ -158,7 +158,7 @@ stargazer(data_to_summarise, type = "html",
 
 As shown in the Table (1), wildfires remain relatively rare events. More than 75% of the locations considered have less than two fires per month when looking at the feature $CNT$. Same applies for the feature $BA$ representing aggregated burnt area, where the distribution is strongly positively skewed. 
 
-As stated in the data description, the proportions of the 18 land covers don't always add up to one. Looking at Figure \@ref(fig:sum) and in Table (1), we can see that the minimum value for the sum is 0.82. It is also seen from the 1st Quantile value that only 25% of the data has a sum below approx 0.99. We therefore continue with the data considering it is close enough.  
+As stated in the data description, the proportions of the 18 land covers do not always add up to one. Looking at Figure \@ref(fig:sum) and in Table (1), we can see that the minimum value for the sum is 0.82. It is also seen from the 1st Quantile value that only 25% of the data has a sum below approx 0.99. We therefore continue with the data considering it is close enough.  
 
 
 ```{=latex}
@@ -198,11 +198,11 @@ We can see that most of the land cover represent less than 10% of the the locati
 Some transformations on the features were made: first the temperature was converted from Kelvin to Celsius. Next, the U-component of wind (the wind speed in Eastern direction) 
 and V-component of wind (the wind speed in Northern direction)  were aggregated using the euclidian norm of the vector:
 $$W\hspace{-2pt}speed=\sqrt{{W\hspace{-2pt}speed_{East}}^2 + {W\hspace{-2pt}speed_{North}}^2 }$$
-with Wspeed the wind speed.
+with $W\hspace{-2pt}speed$ the wind speed.
 
 ## Visualisation and wildfires over time
 
-In order to do a descriptive analysis of the data and before exploring the different factors, we first plot on the map the number of cases of wildfires (denoted as $CNT$ ) as well as the burnt area (denoted as $BA$ ) from it with respect to time. This was made with the objective of determining which states are the most affected by wildfires and identifying the time when the fires happen the most. 
+In order to do a descriptive analysis of the data and before exploring the different factors, we first plot on the map the number of cases of wildfires (denoted as $CNT$) as well as the burnt area (denoted as $BA$) from it with respect to time. This was made with the objective of determining which states are the most affected by wildfires and identifying the time when the fires happen the most. 
 
 The given dataset had a list of different coordinates in the United States. To determine which coordinates belong to which state, the python library $\it{reverse\_geocoder}$  ([link](https://github.com/thampiman/reverse-geocoder)) was used. This library gives the closest address given the coordinates. With this, we proceed by extracting the name of the state, added up the numbers and stored in a dictionary for each state. $CNT_i$ or $BA_i$ stand for the values of the dictionary for i a state in the U.S.A . Let us also denote $CNT_k$ or $BA_k$ the value for k a given coordinate.
 
@@ -210,7 +210,7 @@ To better visualize the data, several adjustments have been made. First, the num
 
 $$Final\_CNT_i=log_2\left(\frac{10^5\left(\sum\limits_{k=coordinate\_0}^{total\_number\_of\_coordinates\_in\_i}CNT_k\right)}{total\_area\_of\_i}+1\right)$$
 $$Final\_BA_i=log_2\left(\frac{10^4\left(\sum\limits_{k=coordinate\_0}^{total\_number\_of\_coordinates\_in\_i}BA_k\right)}{total\_area\_of\_i}+1\right)$$
-for i a state in the U.S.A .
+for i a state in the U.S.A.
 
 The numbers close to 0 are trivial, hence 1 is added before taking the log to avoid having meaningless outliers with the scale starting with big negative numbers.
 
@@ -222,7 +222,7 @@ $$Local\_BA_k=2log_2\left(BA_k+1\right)$$
  
 for k a given coordinate of the dataset.
 
-Several interactive maps in python with the chosen scaling methods was made, but due to technical issues (@1), deploying the maps with an external link was not possible. However, running the interactive maps on the file $\it Visualisation\_general.ipynb$  and $\it Visualisation\_specific.ipynb$  on local servers is still possible, provided that the needed libraries are installed. Figures \@ref(fig:overview), \@ref(fig:CNTm), \@ref(fig:BAm), \@ref(fig:CNTy), \@ref(fig:BAy) are animated plots of the interactive map with respect to different time frame, and the mode ($CNT$ or $BA$ )
+Several interactive maps in python with the chosen scaling methods was made, but due to technical issues^[The given dataset was too huge to be imported in python, since it is a compressed Rdata file, which exceeds 300 MB when converted to a CSV file meaning similar or bigger in size when imported to python. To deploy python applications, one can use Heroku, but the maximum given memory for computation is 512 MB, which is too small with respect to this dataset. One can try to minimize the use of memory, but it would be almost impossible since at least two times the size of the dataset would be needed as free memory in order to make different plots (as importing the file is needed first, and breaking it down to several Dataframe objects would take at least as many memory as the size of the whole dataset). Another approach would be to use R instead and deploy the application on shinyapps.io, because Rdata is believed to be computation-wise and memory-wise more efficient to be handled with R.], deploying the maps with an external link was not possible. However, running the interactive maps on the file $\it Visualisation\_general.ipynb$  and $\it Visualisation\_specific.ipynb$  on local servers is still possible, provided that the needed libraries are installed. Figures \@ref(fig:overview), \@ref(fig:CNTm), \@ref(fig:BAm), \@ref(fig:CNTy), \@ref(fig:BAy) are animated plots of the interactive map with respect to different time frame, and the mode ($CNT$ or $BA$)
 
 Figure \@ref(fig:overview) is an overview of one option that can be chosen for the plot. The color scale shows the burnt area for each states, and the circle scatter plot shows the number of incidences for each coordinates. 
 
@@ -241,7 +241,7 @@ include_graphics("1.png")
 ```
 
 
-Figure \@ref(fig:CNTm) displays the mean out of number of cases of all the years at a specific month. One noticeable aspect is that the states at the edge of the country are most likely to have a high number of incidences. We have a phenomenon similar to the "eye of the storm" at the center, and moving around. At the beginning of the spring season, states at the east side are affected the most : but as the time goes by, the "eye of the storm" moves to the east, and finishes by having states at the west being the most affected.
+Figure \@ref(fig:CNTm) displays the mean out of number of cases of all the years at a specific month. One noticeable aspect is that the states at the edge of the country are most likely to have a high number of incidences. We have a phenomenon similar to the "eye of the storm" at the center, and moving around. At the beginning of the spring season, states at the east side are affected the most: but as the time goes by, the "eye of the storm" moves to the east, and finishes by having states at the west being the most affected.
 
 ```{r CNTm, fig.cap="Animated map of mean of number of wildfires from 1993 to 2015 at each month", echo=FALSE}
 
@@ -265,7 +265,7 @@ include_graphics("4.gif")
 
 ```
 
-Figure \@ref(fig:BAy) is the mean out of burnt area from March to September at a specific year. First we can recover more or less the same result as the one from Figure \@ref(fig:CNTy), except the fact that the eye moved from Kansas to Illinois. It seems like the severity of wildfires is almost periodic : at year 1997, 2004, 2010, the cases are less severe, but in 2000, 2007, 2012, the cases are way more severe. 
+Figure \@ref(fig:BAy) is the mean out of burnt area from March to September at a specific year. First we can recover more or less the same result as the one from Figure \@ref(fig:CNTy), except the fact that the eye moved from Kansas to Illinois. It seems like the severity of wildfires is almost periodic: at year 1997, 2004, 2010, the cases are less severe, but in 2000, 2007, 2012, the cases are way more severe. 
 
 ```{r BAy, fig.cap="Animated map of mean of burnt area at each year", echo=FALSE}
 
@@ -288,8 +288,8 @@ include_graphics("3.png")
 ```
 
 
-## Wildfires and the land cover:
-### Correlation between Land covers and Wildfires:
+## Wildfires and the land cover
+### Correlation between Land covers and Wildfires
 ```{r, include=FALSE}
 load("../Data/data_train_DF.RData")
 data_withNA = data_train_DF
@@ -348,7 +348,7 @@ ggplot(plotDat,aes(X1,X2, fill = c( "lightblue","red")[ value + 1 ])) +
 ### Land cover over time and location
 
 
-This section will address the distribution of land covers over time. To do so, the geographical coordinates of Malibu, California has been selected. This area has been heavily impacted by wildfires in recent years. 'In November 2018, the wealthy coastal enclave of Malibu was engulfed by the Woolsey Fire, which spread to over 96,000 acres of land outside of LA and is now 35% contained. At least two people were pronounced dead in Malibu on Friday' (@Malibu). 
+This section will address the distribution of land covers over time. To do so, the geographical coordinates of Malibu, California has been selected. This area has been heavily impacted by wildfires in recent years. "In November 2018, the wealthy coastal enclave of Malibu was engulfed by the Woolsey Fire, which spread to over 96,000 acres of land outside of LA and is now 35% contained. At least two people were pronounced dead in Malibu on Friday" (@Malibu). 
 In Figure \@ref(fig:loc), we can see the exact location of the studied point on the map of the United States.
 
 
@@ -664,7 +664,7 @@ p
 ```
 In Figure (\@ref(fig:fire2000)), the highest occurency for fires happen in Florida and Georgia in the South East, in New Jersey in the East coast and all along the West coast. These areas are characterised by the predominance of $bradleaved evergreen closed to open$ trees. 
 This observation can be explained by the effect of climbing fire -- the easy inflammable land covers e.g. $grassland and shrubs$ act as a ladder to higher land cover with higher fuel capacity as trees. 
-Usually, 'the forests are more prone to the fire only when there is a particularly low near-surface SM (soil moisture), most likely from moderate to extensive drought' (@schaefer2019land).
+Usually, "the forests are more prone to the fire only when there is a particularly low near-surface SM (soil moisture), most likely from moderate to extensive drought" (@schaefer2019land).
 
 
 Also, it can be observed that the closeness of urban land cover is correlated with occurrence of wildfires (For instance near New York city and Los Angeles), meaning that the human activity can be the trigger of wildfires. Other commonly known trigger of wildfires is the presence of dry thunderstorms with high activity of cloud-to-ground flashes. This mentioned trigger is usually the cause of the higher frequency of big wildfires in the Pacific Coast.
@@ -730,7 +730,7 @@ FindCorForLC <- function (x,methode,threshold){
     c = cor(X,Y,method=methode)
     if (c > threshold | c < -threshold){
       correlations = c(correlations, y)
-      print (paste("cor(",x,",",y,")=",c))
+      print (paste("cor(",x,",",y,")=",c,sep=""))
     }
   }
   return(correlations)
@@ -756,7 +756,7 @@ corr18 =FindCorForLC(18,"pearson",0.6)
 ```
 
 
-Here, we choose a threshold of 0.6 and none of the correlations has been displayed except one. This means that those who haven't been printed are less that 0.6. We get that the correlation between the shrublands and the surface net thermal radiation is of -0.72. This seems normal: the more radiation is issued by the surface, the less shrub we get. But the results are not as good as expected. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the dependence is not linear here. The first option seems less likely. So we are going to compute the correlation with spearman method to see if the relation between the variables is monotonic. 
+Here, we choose a threshold of 0.6 and none of the correlations has been displayed except one. This means that those who have not been printed are less that 0.6. We get that the correlation between the shrublands and the surface net thermal radiation is of -0.72. This seems normal: the more radiation is issued by the surface, the less shrub we get. But the results are not as good as expected. In fact, when printing all the correlations (threshold = 0) we remark that the values are very small. This can come from the fact that there are no correlations between the variables or that the dependence is not linear here. The first option seems less likely. So we are going to compute the correlation with spearman method to see if the relation between the variables is monotonic. 
 
 
 ```{r, echo = FALSE}
@@ -784,7 +784,7 @@ corr18 = FindCorForLC(18,"spearman",0.6)
 Now by changing the method, we observe that we get that the land cover variable  11 (shrubland) and the surface net thermal radiation are correlated, same result as earlier. And, we also get that the water, urban and surface pressure are correlated. The pressure in the water is higher that the atmospheric pressure and increases with the depth. The pollution of the air explains the positive correlation between urban lands and surface pressure. To visualize our results and try to show more, we are going to regroup our data so that we can compute a correlation matrix with again spearman method. This part consists of taking variables of land covers that are similar with common characteristics ans sum them together.
 
 
-```{r, fig.cap="Correlation heatmap after regrouping the land covers with meteorological variables.",fig.width=7, fig.height=7, echo =FALSE}
+```{r, fig.cap="Correlation heatmap after regrouping the land covers with meteorological variables",fig.width=7, fig.height=7, echo =FALSE}
 dataMod = data
 Rainfed = dataMod$CR+ dataMod$CRherb
 dataMod$Rainfed = Rainfed
@@ -804,33 +804,32 @@ dataMod = dataMod[, -which(names(dataMod)%in% remove)]
 dataMod$ShrubArea = ShrubArea
  
 dataMod <-dataMod %>% relocate(Rainfed,Trees,vegetation,ShrubArea)
-corrplot(cor(dataMod, method = "spearman"), method = "color", addCoef.col="black",tl.cex = 0.7, cl.cex = 0.7,
-               number.cex = 0.8, number.digits = 2)
+corrplot(cor(dataMod, method = "spearman"), method = "color", addCoef.col="black",tl.cex = 0.8, cl.cex = 0.8, number.cex = 0.7, number.digits = 2)
 ```
 
 
 This technique has been useful to represent our previous result. Also in the figure, Evaporation is negatively correlated with the trees, meaning the more trees there are, less evaporation there is. For the next project, one can think of trying to find correlation between other land cover and meteorological data by plotting the scatter plot to find a curve that approximate the data to look for non monotonic or non linear correlation.
 
 ### Spreading fire based on the type of land cover
-First, to analyze the spread of a fire, let's look for the distribution of the number of fires in a grid during a month. 
+First, to analyze the spread of a fire, let us look for the distribution of the number of fires in a grid during a month. 
 
 
 
-```{r,fig.cap="Histogram representing the number of wild fires in a grid from 1993 to 2015.",echo = FALSE}
+```{r,fig.cap="Histogram representing the number of wild fires in a grid from 1993 to 2015",echo = FALSE}
 hist <- hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1), xlab="Fires ", ylab=" Frequency")
 ```
 
 
-We remark that most of the values are close to 0 and because of the outliers we can't see the distribution very clearly. We thus filter the outliers to have a better view of the distrubution. 
+We remark that most of the values are close to 0 and because of the outliers we cannot see the distribution very clearly. We thus filter the outliers to have a better view of the distrubution. 
 
 
-```{r, fig.cap="Histogram representing the number of wild fires in a grid from 1993 to 2015(without outliers) ",echo = FALSE}
+```{r, fig.cap="Histogram representing the number of wild fires in a grid from 1993 to 2015 (without outliers)",echo = FALSE}
 df1 <-df%>% filter(CNT<20)
 hist = hist(df1$CNT, breaks = seq(-0.5, max(df1$CNT)+0.5, 1), main= "Number of fires in a grid per month", xlab = "Fires")
 ``` 
 
 
-Now, since the aim of this part is to predict the spread of a fire given the land covers data. Let's plot the distribution of the number of fire according to each land cover variable. 
+Now, since the aim of this part is to predict the spread of a fire given the land covers data. Let us plot the distribution of the number of fire according to each land cover variable. 
 
 ```{r, echo = FALSE}
 sample <- df [sample(1:nrow(df),10000),]
@@ -980,7 +979,7 @@ range(selection$year)
 
 As a result, a correlation heatmap will allow us to distinguish certain factors that could favor a wildfire (Figure \@ref(fig:corrmet)). 
 
-````{r corrmet, fig.cap="Correlation heatmap after subsetting (explained above) with meteorological variables.", fig.width=7, fig.height=7, echo=FALSE}
+````{r corrmet, fig.cap="Correlation heatmap after subsetting (explained above) with meteorological variables", fig.width=7, fig.height=7, echo=FALSE}
 
 # Correlations
 sel = cor(selection)
@@ -996,7 +995,7 @@ Since we are looking for meteorological risk factors, we may only consider the f
 
 First, we see that there are no pairs of fully correlated variables. Indeed, the highest value (absolute) is 0.43. The number of wildfires and months are negatively correlated. This can be explained by the fact that months range from March to September and that there are more occurrences of fire in March and April than in August and September. The fact that the numbers are small shows that the causes of a wildfire are meteorologically multifactorial.
 
-An interesting observation is that $CNT$ and $BA$ are negatively correlated, meaning that the more area burnt, the fewer wildfires there are. Most of the time, the signs of correlations in the first two rows are not the same for these two variables. For example, by looking at temperatures and solar radiation, the higher they are, the more area burnt, but the less wildfires. This can be explained by the fact that our subset contains substantial wildfires, so there aren't many, but they are destructive.
+An interesting observation is that $CNT$ and $BA$ are negatively correlated, meaning that the more area burnt, the fewer wildfires there are. Most of the time, the signs of correlations in the first two rows are not the same for these two variables. For example, by looking at temperatures and solar radiation, the higher they are, the more area burnt, but the less wildfires. This can be explained by the fact that our subset contains substantial wildfires, so there are not many, but they are destructive.
 
 Another variable that we can comment on is precipitation. For an area to be burnt, there must be no rain or high humidity conditions, hence the negative correlations between $BA$ and precipitation. The positive correlation with $CNT$ could be explained by unstable weather conditions. As with wind speed, the higher it is, the more unstable the air masses and the greater the risk of a natural disaster.
 
