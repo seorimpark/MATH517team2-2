@@ -816,15 +816,15 @@ First, to analyze the spread of a fire, let's look for the distribution of the n
 
 
 
-```{r,echo = FALSE}
-hist <- hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1), main=" Number of fires in a grid per month", xlab="Fires ", ylab=" Frequency")
+```{r,fig.cap="Histogram representing the number of wild fires in a grid from 1993 to 2015.",echo = FALSE}
+hist <- hist(df$CNT,breaks=seq(-0.5,max(df$CNT)+0.5,1), xlab="Fires ", ylab=" Frequency")
 ```
 
 
 We remark that most of the values are close to 0 and because of the outliers we can't see the distribution very clearly. We thus filter the outliers to have a better view of the distrubution. 
 
 
-```{r, echo = FALSE}
+```{r, fig.cap="Histogram representing the number of wild fires in a grid from 1993 to 2015(without outliers) ",echo = FALSE}
 df1 <-df%>% filter(CNT<20)
 hist = hist(df1$CNT, breaks = seq(-0.5, max(df1$CNT)+0.5, 1), main= "Number of fires in a grid per month", xlab = "Fires")
 ``` 
@@ -892,7 +892,7 @@ cowplot::plot_grid(plot1, plot2, plot3, plot4,plot5, plot6, plot7,plot8,plot9)
 ```
 
 
-```{r, echo = FALSE}
+```{r,fig.cap="Distribution of the number of fire according to each land cover", echo = FALSE}
 cowplot::plot_grid(plot10,plot11,plot12,plot13,plot14,plot15,plot16,plot17,plot18)
 ```
 
@@ -901,7 +901,7 @@ Most of the plots have a distribution that can make this of Poisson distribution
 In this section, we try to model the fact that there was a fire in a grid for a given month  given the land cover specification of the grid. The problem is that we have the number of fire in the grid. One can think of using the zero inflated Poisson regression. In fact, the zero inflated Poisson is used to count data with excess zeros and overdispersion, which describe well our data. It combines the Poisson distribution and the logit distribution.
 
 
-```{r, echo = FALSE}
+```{r,tab.cap="Table of Zero Poisson regression results", echo = FALSE}
 m1<-zeroinfl(CNT~lc1+lc2+lc3+lc4+lc5+lc6+lc7+lc8+lc9+lc10+lc11+lc12+lc13+lc14+lc15+lc16+lc17+lc18, data = df)
 summary(m1)
 ```
